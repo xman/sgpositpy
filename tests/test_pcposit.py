@@ -19,3 +19,78 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+
+
+import unittest
+
+from sgposit.pcposit import PCPosit
+
+
+class TestPCPosit(unittest.TestCase):
+
+    def setUp(self):
+        pass
+
+
+    def tearDown(self):
+        pass
+
+
+    def test_add(self):
+        raise NotImplementedError
+
+
+    def test_sub(self):
+        raise NotImplementedError
+
+
+    def test_neg(self):
+        raise NotImplementedError
+
+
+    def test_mul(self):
+        raise NotImplementedError
+
+
+    def test_truediv(self):
+        raise NotImplementedError
+
+
+    def test_floordiv(self):
+        raise NotImplementedError
+
+
+    def test_eq(self):
+        raise NotImplementedError
+
+
+    def test_ne(self):
+        raise NotImplementedError
+
+
+    def test_lt(self):
+        raise NotImplementedError
+
+
+    def test_le(self):
+        raise NotImplementedError
+
+
+    def test_gt(self):
+        raise NotImplementedError
+
+
+    def test_ge(self):
+        raise NotImplementedError
+
+
+    def test_str(self):
+        raise NotImplementedError
+
+
+    def test_repr(self):
+        raise NotImplementedError
+
+
+if __name__ == '__main__':
+    unittest.main()
