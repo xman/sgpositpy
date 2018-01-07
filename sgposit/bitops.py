@@ -28,3 +28,20 @@ def create_mask(n):
     if n <= 0:
         return 0
     return (1 << n) - 1
+
+
+"""
+Get bits in integer v from bit ifirst to bit ilast, inclusive.
+Integer v = b_n-1, ..., b_1, b_0
+The bit position is 0-based and starts from the least significant bit.
+"""
+def get_int_bits(v, ifirst, ilast=None):
+    if ilast is None: ilast = ifirst
+
+    assert ifirst >= 0 and ifirst <= ilast
+
+    mask = create_mask(ilast-ifirst+1)
+    v >>= ifirst
+    v &= mask
+
+    return v
