@@ -44,5 +44,13 @@ class TestBitops(unittest.TestCase):
         self.assertEqual(mask, 0x1FFFF)
 
 
+    def test_get_int_bits(self):
+        bits = get_int_bits(0x00FF, 3, 7)
+        self.assertEqual(bits, 0x01F)
+
+        bits = get_int_bits(0xFF0F, 4, 11)
+        self.assertEqual(bits, 0x0F0)
+
+
 if __name__ == '__main__':
     unittest.main()
