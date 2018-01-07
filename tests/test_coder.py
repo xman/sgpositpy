@@ -64,5 +64,19 @@ class TestCoder(unittest.TestCase):
         self.assertNotEqual(rep['t'], 'c')
 
 
+    def test_decode_posit_binary_normal(self):
+        bits = 0x0025       # nbits=6, es=2, value=-128
+        rep = decode_posit_binary(bits, 6, 2)
+        self.assertEqual(rep, { 's': 1, 'k': 1, 'e': 3, 'f': 0, 'h': 0, 'nbits': 6, 'es': 2, 't': 'n' })
+
+        bits = 0x0009       # nbits=6, es=2, value=3/32
+        rep = decode_posit_binary(bits, 6, 2)
+        self.assertEqual(rep, { 's': 0, 'k': -1, 'e': 0, 'f': 1, 'h': 1, 'nbits': 6, 'es': 2, 't': 'n' })
+
+        bits = 0x0015       # nbits=6, es=2, value=6
+        rep = decode_posit_binary(bits, 6, 2)
+        self.assertEqual(rep, { 's': 0, 'k': 0, 'e': 2, 'f': 1, 'h': 1, 'nbits': 6, 'es': 2, 't': 'n' })
+
+
 if __name__ == '__main__':
     unittest.main()
