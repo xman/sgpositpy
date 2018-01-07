@@ -19,3 +19,67 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+
+
+class PCPosit:
+
+    def __init__(self, v, nbits=32, es=2):
+        self.nbits = nbits
+        self.es = es
+        self.u = 2**(2**es)
+
+
+    def __add__(self, other):
+        raise NotImplementedError
+
+
+    def __sub__(self, other):
+        raise NotImplementedError
+
+
+    def __neg__(self):
+        raise NotImplementedError
+
+
+    def __mul__(self, other):
+        raise NotImplementedError
+
+
+    def __truediv__(self, other):
+        raise NotImplementedError
+
+
+    def __floordiv__(self, other):
+        raise NotImplementedError
+
+
+    def __eq__(self, other):
+        raise NotImplementedError
+
+
+    def __ne__(self, other):
+        raise NotImplementedError
+
+
+    def __lt__(self, other):
+        raise NotImplementedError
+
+
+    def __le__(self, other):
+        raise NotImplementedError
+
+
+    def __gt__(self, other):
+        raise NotImplementedError
+
+
+    def __ge__(self, other):
+        raise NotImplementedError
+
+
+    def __str__(self):
+        raise NotImplementedError
+
+
+    def __repr__(self):
+        raise NotImplementedError
