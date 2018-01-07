@@ -68,3 +68,114 @@ def decode_posit_binary(bits, nbits, es):
         rep['f'] = bitops.get_int_bits(bits, 0, i)
 
     return rep
+
+
+def encode_posit_binary(rep):
+    assert rep['nbits'] >= 2
+    assert rep['es'] >= 0
+    assert rep['s'] == 0 or rep['s'] == 1
+    #assert rep['k'] >= -rep['nbits'] + 2 and rep['k'] <= rep['nbits'] - 2, rep
+    assert rep['e'] >= 0 and rep['e'] <= 2**rep['es'] - 1
+    #assert rep['h'] >= 0 and rep['h'] <= max(0, rep['nbits'] - 1 - 2 - rep['es'])
+    assert rep['f'] >= 0 and rep['f'] <= 2**rep['h'] - 1
+    assert rep['t'] in ['c', 'n', 'z']
+
+    if rep['t'] == 'z':
+        return 0
+    elif rep['t'] == 'c':
+        return 1 << (rep['nbits']-1)
+
+    assert rep['t'] == 'n'
+
+    n = rep['nbits'] - 1    # Remaining number of bits after reserving 1 for sign bit.
+    bits = 0
+
+    if rep['k'] >= 0:
+        if n >= rep['k'] + 1:
+            bits = bitops.create_mask(rep['k'] + 1)
+            n -= rep['k'] + 1
+
+            assert n >= 0
+
+            if n > 0:
+                bits <<= 1
+                n -= 1
+        else:
+            bits = bitops.create_mask(n)
+            n = 0
+    else:
+        bits = 1
+        n -= min(n, -rep['k'] + 1)
+
+    assert n >= 0
+
+    rounded = False
+
+    if n >= rep['es']:
+        bits <<= rep['es']
+        bits |= rep['e']
+        n -= rep['es']
+    else:
+        assert rep['es'] > 0
+
+        m = rep['es'] - n       # Number of exponent bits to truncate.
+        te = rep['e'] >> m
+        te <<= m                # Rounded down exponent bits.
+
+        value = rep['e'] * 2**rep['h'] + rep['f']
+        represented_value = te * 2**rep['h']
+        truncation = value - represented_value
+        tie = 2**(te + 1 + rep['h'])
+
+        te >>= m        # Truncated exponent bits.
+        bits <<= n
+        bits |= te
+        n = 0
+
+        if truncation == tie:
+            if bits & 0x01 and bits + 1 < 2**(rep['nbits'] - 1):
+                bits += 1
+        elif truncation > tie:
+            if bits + 1 < 2**(rep['nbits'] - 1):
+                bits += 1
+
+        rounded = True
+
+    if n >= 0:
+        if n > rep['h']:
+            bits <<= rep['h']
+            bits |= rep['f']
+            n -= rep['h']
+
+            bits <<= n
+            n = 0
+        elif rounded == False:
+            m = rep['h'] - n    # Number of fractional bits to truncate.
+            tf = rep['f'] >> m
+            tf <<= m            # Rounded down fractional bits.
+
+            value = rep['f']
+            represented_value = tf
+            truncation = value - represented_value
+            tie = 2**(m-1)
+
+            tf >>= m    # Truncated fractional bits.
+            bits <<= n
+            bits |= tf
+            n = 0
+
+            if truncation == tie:
+                if bits & 0x01 and bits + 1 < 2**(rep['nbits'] - 1):
+                    bits += 1
+            elif truncation > tie:
+                if bits + 1 < 2**(rep['nbits'] - 1):
+                    bits += 1
+
+            rounded = True
+
+    if rep['s'] == 1:
+        bits = -bits
+        mask = bitops.create_mask(rep['nbits'])
+        bits &= mask
+
+    return bits
