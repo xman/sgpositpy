@@ -52,5 +52,16 @@ class TestBitops(unittest.TestCase):
         self.assertEqual(bits, 0x0F0)
 
 
+    def test_count_leading_bits(self):
+        bits = 0b0111110000
+        self.assertEqual(count_leading_bits(bits, 1, 8), 5)
+
+        bits = 0b0110001111
+        self.assertEqual(count_leading_bits(bits, 0, 5), 2)
+
+        bits = 0b0110001111
+        self.assertEqual(count_leading_bits(bits, 1, 5), 0)
+
+
 if __name__ == '__main__':
     unittest.main()
