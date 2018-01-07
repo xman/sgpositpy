@@ -45,3 +45,21 @@ def get_int_bits(v, ifirst, ilast=None):
     v &= mask
 
     return v
+
+
+"""
+Count the number of leading bits with value b, from bit ilast down to bit 0.
+Integer v = b_n-1, ..., b_1, b_0
+The bit position is 0-based and starts from the least significant bit.
+"""
+def count_leading_bits(bits, b, ilast):
+    assert ilast >= 0
+
+    count = 0
+    for i in range(ilast, -1, -1):
+        if get_int_bits(bits, i) == b:
+            count += 1
+        else:
+            break
+
+    return count
