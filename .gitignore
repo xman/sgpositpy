@@ -1,0 +1,5 @@
+build/
+dist/
+sgposit.egg-info/
+__pycache__/
+*.pyc
