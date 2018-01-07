@@ -36,5 +36,13 @@ class TestBitops(unittest.TestCase):
         pass
 
 
+    def test_create_mask(self):
+        mask = create_mask(10)
+        self.assertEqual(mask, 0x03FF)
+
+        mask = create_mask(17)
+        self.assertEqual(mask, 0x1FFFF)
+
+
 if __name__ == '__main__':
     unittest.main()
