@@ -24,6 +24,10 @@
 from sgposit import bitops
 
 
+def create_positrep(nbits=32, es=2, s=0, k=0, e=0, f=0, h=0, t='n'):
+    return { 's': s, 'k': k, 'e': e, 'f': f, 'h': h, 'nbits': nbits, 'es': es, 't': t }
+
+
 def decode_posit_binary(bits, nbits, es):
     assert nbits >= 2 and es >= 0
 
