@@ -179,3 +179,47 @@ def encode_posit_binary(rep):
         bits &= mask
 
     return bits
+
+
+def positrep_to_str(rep):
+    if rep['t'] == 'z':
+        return '0'
+    elif rep['t'] == 'c':
+        return 'cinf'
+
+    assert rep['t'] == 'n'
+
+    out = ''
+    if rep['s'] == 1:
+        out = '-'
+
+    E = (2**rep['es'] * rep['k']) + rep['e']
+    V = (1 << rep['h']) + rep['f']
+    D = rep['h']
+
+    if E >= 0:
+        V <<= E
+    else:
+        D += -E
+
+    mask = bitops.create_mask(D)
+    fraction_bits = V & mask
+    integral = V >> D
+
+    num = 0
+    den = 1
+    for d in range(D):
+        if fraction_bits & 0x01 == 1:
+            num += den
+        den *= 2
+        fraction_bits >>= 1
+
+    if num == 0:
+        out += str(integral)
+    else:
+        if integral != 0:
+            out += str(integral)
+            out += '-' if rep['s'] == 1 else '+'
+        out += str(num) + '/' + str(den)
+
+    return out
