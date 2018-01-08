@@ -31,7 +31,7 @@ def create_positrep(nbits=32, es=2, s=0, k=0, e=0, f=0, h=0, t='n'):
 def decode_posit_binary(bits, nbits, es):
     assert nbits >= 2 and es >= 0
 
-    rep = { 's': 0, 'k': 0, 'e': 0, 'f': 0, 'h': 0, 'nbits': nbits, 'es': es, 't': 'n' }
+    rep = create_positrep(nbits=nbits, es=es)
 
     if bits == 0:
         rep['t'] = 'z'
