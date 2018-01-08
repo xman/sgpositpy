@@ -112,5 +112,31 @@ class TestCoder(unittest.TestCase):
         self.assertEqual(bits, 0x0015)
 
 
+    def test_positrep_to_str(self):
+        rep = { 's': 1, 'k': 1, 'e': 3, 'f': 0, 'h': 0, 'nbits': 6, 'es': 2, 't': 'n' }
+        repstr = positrep_to_str(rep)
+        self.assertEqual(repstr, '-128')
+
+        rep = { 's': 0, 'k': -1, 'e': 0, 'f': 1, 'h': 1, 'nbits': 6, 'es': 2, 't': 'n' }
+        repstr = positrep_to_str(rep)
+        self.assertEqual(repstr, '3/32')
+
+        rep = { 's': 0, 'k': 0, 'e': 2, 'f': 1, 'h': 1, 'nbits': 6, 'es': 2, 't': 'n' }
+        repstr = positrep_to_str(rep)
+        self.assertEqual(repstr, '6')
+
+        rep = { 's': 0, 'k': 0, 'e': 0, 'f': 1, 'h': 1, 'nbits': 6, 'es': 2, 't': 'n' }
+        repstr = positrep_to_str(rep)
+        self.assertEqual(repstr, '1+1/2')
+
+        rep = { 's': 0, 'k': 0, 'e': 0, 'f': 0, 'h': 0, 'nbits': 10, 'es': 3, 't': 'c' }
+        repstr = positrep_to_str(rep)
+        self.assertEqual(repstr, 'cinf')
+
+        rep = { 's': 1, 'k': 1, 'e': 3, 'f': 0, 'h': 0, 'nbits': 6, 'es': 2, 't': 'z' }
+        repstr = positrep_to_str(rep)
+        self.assertEqual(repstr, '0')
+
+
 if __name__ == '__main__':
     unittest.main()
