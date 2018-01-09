@@ -21,8 +21,6 @@
 # SOFTWARE.
 
 
-import copy
-
 from sgposit import coder
 
 
@@ -49,7 +47,7 @@ class PCPosit:
                 raise NotImplementedError('Mismatched nbits posit conversion is not implemented.')
             if es_given and v.rep['es'] != es:
                 raise NotImplementedError('Mismatched es posit conversion is not implemented.')
-            self.rep = copy.deepcopy(v.rep)
+            self.rep = coder.copy_positrep(v.rep)
             return
         elif mode == 'bits':
             if isinstance(v, int):
@@ -63,9 +61,9 @@ class PCPosit:
 
     def __add__(self, other):
         if self.rep['t'] == 'z':
-            return copy.deepcopy(other)
+            return PCPosit(other)
         elif other.rep['t'] == 'z':
-            return copy.deepcopy(self)
+            return PCPosit(self)
         elif self.rep['t'] == 'c' or other.rep['t'] == 'c':
             ret = PCPosit(2**(self.rep['nbits']-1), mode='bits', nbits=self.rep['nbits'], es=self.rep['es'])
             return ret
