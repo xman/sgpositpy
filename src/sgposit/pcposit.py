@@ -32,13 +32,22 @@ Provably correct posit number arithmetic.
 class PCPosit:
 
     def __init__(self, v=None, mode=None, nbits=None, es=None):
+        nbits_given = True
+        es_given = True
+        if nbits is None:
+            nbits_given = False
+            nbits = 32
+        if es is None:
+            es_given = False
+            es = 2
+
         if v is None:
-            self.rep = coder.create_positrep(nbits=nbits, es=es, t='z')
+            self.rep = coder.create_zero_positrep(nbits=nbits, es=es)
             return
         elif isinstance(v, PCPosit):
-            if nbits is not None and v.rep['nbits'] != nbits:
+            if nbits_given and v.rep['nbits'] != nbits:
                 raise NotImplementedError('Mismatched nbits posit conversion is not implemented.')
-            if es is not None and v.rep['es'] != es:
+            if es_given and v.rep['es'] != es:
                 raise NotImplementedError('Mismatched es posit conversion is not implemented.')
             self.rep = copy.deepcopy(v.rep)
             return
