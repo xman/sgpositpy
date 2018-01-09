@@ -21,8 +21,12 @@
 # SOFTWARE.
 
 
+import os
 import unittest
 
+from mpmath import mp
+
+from sgposit         import bitops
 from sgposit         import coder
 from sgposit.pcposit import PCPosit
 
@@ -30,7 +34,7 @@ from sgposit.pcposit import PCPosit
 class TestPCPosit(unittest.TestCase):
 
     def setUp(self):
-        pass
+        mp.dps = 1000
 
 
     def tearDown(self):
@@ -71,6 +75,43 @@ class TestPCPosit(unittest.TestCase):
         c = a + b
         cbits = coder.encode_posit_binary(c.rep)
         self.assertEqual(cbits, 0x12) # 2+1/2 ~> 2
+
+
+    # (a op b) rounded to nearest tests, with reference to mpmath computed results.
+    @unittest.skipUnless(os.environ.get('SGPOSIT_LONG_TESTS') == '1', 'Long test.')
+    def test_add_exhaustive(self):
+        for nbits in range(2,9):
+          for es in range(0,3):
+            mask = bitops.create_mask(nbits)
+            for abits in range(2**nbits):
+                for bbits in range(2**nbits):
+                    a = PCPosit(abits, nbits=nbits, es=es, mode='bits')
+                    b = PCPosit(bbits, nbits=nbits, es=es, mode='bits')
+                    c = a + b
+
+                    if a.rep['t'] == 'n' and b.rep['t'] == 'n':
+                        amp = mp.mpf(eval(coder.positrep_to_str(a.rep)))
+                        bmp = mp.mpf(eval(coder.positrep_to_str(b.rep)))
+                        c2mp = amp + bmp
+                        c0 = PCPosit((bbits-1) & mask, nbits=nbits, es=es, mode='bits')
+                        c1 = PCPosit((bbits+1) & mask, nbits=nbits, es=es, mode='bits')
+
+                        cbits = coder.encode_posit_binary(c.rep)
+                        roundedc = coder.decode_posit_binary(cbits, nbits=nbits, es=es)
+
+                        rcmp = mp.mpf(eval(coder.positrep_to_str(roundedc)))
+                        cratiodiffmp = mp.fabs(mp.log(rcmp/c2mp)) if c2mp != 0 else mp.fabs(rcmp - c2mp)
+                        cabsdiffmp = mp.fabs(rcmp - c2mp)
+                        if c0.rep['t'] == 'n':
+                            c0mp = mp.mpf(eval(coder.positrep_to_str(c0.rep)))
+                            c0ratiodiffmp = mp.fabs(mp.log(c0mp/c2mp)) if c2mp != 0 else mp.fabs(c0mp - c2mp)
+                            c0absdiffmp = mp.fabs(c0mp - c2mp)
+                            self.assertTrue(cratiodiffmp <= c0ratiodiffmp or cabsdiffmp <= c0absdiffmp)
+                        if c1.rep['t'] == 'n':
+                            c1mp = mp.mpf(eval(coder.positrep_to_str(c1.rep)))
+                            c1ratiodiffmp = mp.fabs(mp.log(c1mp/c2mp)) if c2mp != 0 else mp.fabs(c1mp - c2mp)
+                            c1absdiffmp = mp.fabs(c1mp - c2mp)
+                            self.assertTrue(cratiodiffmp <= c1ratiodiffmp or cabsdiffmp <= c1absdiffmp)
 
 
     @unittest.skip("Not implemented.")

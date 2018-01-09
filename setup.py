@@ -15,7 +15,7 @@ setup(
         'dev' : [],
         'test': [],
     },
-    tests_require=[],
+    tests_require=['mpmath'],
     test_suite="tests",
     packages=find_packages(exclude=['build', 'docs', 'samples', 'tests']),
 )
