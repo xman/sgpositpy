@@ -23,6 +23,7 @@
 
 import unittest
 
+from sgposit         import coder
 from sgposit.pcposit import PCPosit
 
 
@@ -36,9 +37,40 @@ class TestPCPosit(unittest.TestCase):
         pass
 
 
-    @unittest.skip("Not implemented.")
-    def test_add(self):
-        raise NotImplementedError
+    # Simple cases for bits to bits comparisons.
+    def test_add_simple(self):
+        nbits = 6
+        es = 2
+
+        a = PCPosit(0x11, nbits=nbits, es=es, mode='bits')  #  3/2
+        b = PCPosit(0x11, nbits=nbits, es=es, mode='bits')  #  3/2
+        c = a + b
+        cbits = coder.encode_posit_binary(c.rep)
+        self.assertEqual(cbits, 0x13) # 3
+
+        a = PCPosit(0x0C, nbits=nbits, es=es, mode='bits')  #  1/4
+        b = PCPosit(0x0F, nbits=nbits, es=es, mode='bits')  #  3/4
+        c = a + b
+        cbits = coder.encode_posit_binary(c.rep)
+        self.assertEqual(cbits, 0x10) # 1
+
+        a = PCPosit(0x0A, nbits=nbits, es=es, mode='bits')  #  1/8
+        b = PCPosit(0x35, nbits=nbits, es=es, mode='bits')  # -3/16
+        c = a + b
+        cbits = coder.encode_posit_binary(c.rep)
+        self.assertEqual(cbits, 0x38) # -1/16
+
+        a = PCPosit(0x0D, nbits=nbits, es=es, mode='bits')  #  3/8
+        b = PCPosit(0x0F, nbits=nbits, es=es, mode='bits')  #  3/4
+        c = a + b
+        cbits = coder.encode_posit_binary(c.rep)
+        self.assertEqual(cbits, 0x10) # 9/8 ~> 1
+
+        a = PCPosit(0x11, nbits=nbits, es=es, mode='bits')  #  3/2
+        b = PCPosit(0x10, nbits=nbits, es=es, mode='bits')  #  1
+        c = a + b
+        cbits = coder.encode_posit_binary(c.rep)
+        self.assertEqual(cbits, 0x12) # 2+1/2 ~> 2
 
 
     @unittest.skip("Not implemented.")
