@@ -107,6 +107,7 @@ def encode_posit_binary(rep):
 
     n = rep['nbits'] - 1    # Remaining number of bits after reserving 1 for sign bit.
     bits = 0
+    rounded = False
 
     if rep['k'] >= 0:
         if n >= rep['k'] + 1:
@@ -121,19 +122,20 @@ def encode_posit_binary(rep):
         else:
             bits = bitops.create_mask(n)
             n = 0
+            rounded = True
     else:
         bits = 1
+        if n < -rep['k'] + 1:
+            rounded = True
         n -= min(n, -rep['k'] + 1)
 
     assert n >= 0
-
-    rounded = False
 
     if n >= rep['es']:
         bits <<= rep['es']
         bits |= rep['e']
         n -= rep['es']
-    else:
+    elif rounded == False:
         assert rep['es'] > 0
 
         m = rep['es'] - n       # Number of exponent bits to truncate.
