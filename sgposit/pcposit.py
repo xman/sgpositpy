@@ -53,7 +53,54 @@ class PCPosit:
 
 
     def __add__(self, other):
-        raise NotImplementedError
+        if self.rep['t'] == 'z':
+            return copy.deepcopy(other)
+        elif other.rep['t'] == 'z':
+            return copy.deepcopy(self)
+        elif self.rep['t'] == 'c' or other.rep['t'] == 'c':
+            ret = PCPosit(2**(self.rep['nbits']-1), mode='bits', nbits=self.rep['nbits'], es=self.rep['es'])
+            return ret
+
+        assert self.rep['t'] == 'n' and other.rep['t'] == 'n'
+
+        xa = ( -1)**self.rep['s'] * ( 2**self.rep['h'] +  self.rep['f'])
+        xb = (-1)**other.rep['s'] * (2**other.rep['h'] + other.rep['f'])
+        ma =  2**self.rep['es'] *  self.rep['k'] +  self.rep['e'] -  self.rep['h']
+        mb = 2**other.rep['es'] * other.rep['k'] + other.rep['e'] - other.rep['h']
+
+        m = max(ma, mb)
+        xc = xa*2**(m-mb) + xb*2**(m-ma)
+        mc = ma + mb - m
+
+        pc = PCPosit(self, nbits=self.rep['nbits'], es=self.rep['es'])
+        pc.rep = coder.create_positrep(nbits=self.rep['nbits'], es=self.rep['es'])
+
+        if xc == 0:
+            pc.rep['t'] = 'z'
+            return pc
+        elif xc < 0:
+            xc = -xc
+            pc.rep['s'] = 1
+
+        while xc != 0 and xc % 2 == 0:
+            xc >>= 1
+            mc += 1
+
+        g = 0
+        x = xc
+        while x >= 2:
+            x >>= 1
+            g -= 1
+
+        assert x >= 1 and x < 2, "x={}".format(x)
+
+        pc.rep['e'] = (mc - g) % 2**pc.rep['es']
+        pc.rep['k'] = (mc - g) // 2**pc.rep['es']
+
+        pc.rep['h'] = -g
+        pc.rep['f'] = xc - 2**pc.rep['h']
+
+        return pc
 
 
     def __sub__(self, other):
