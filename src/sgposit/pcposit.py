@@ -160,7 +160,3 @@ class PCPosit:
 
     def __str__(self):
         return coder.positrep_to_str(self.rep)
-
-
-    def __repr__(self):
-        raise NotImplementedError
