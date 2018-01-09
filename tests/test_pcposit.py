@@ -119,9 +119,19 @@ class TestPCPosit(unittest.TestCase):
         raise NotImplementedError
 
 
-    @unittest.skip("Not implemented.")
-    def test_neg(self):
-        raise NotImplementedError
+    def test_neg_simple(self):
+        nbits = 6
+        es = 2
+
+        a = PCPosit(0x11, nbits=nbits, es=es, mode='bits')  #  3/2
+        c = -a
+        cbits = coder.encode_posit_binary(c.rep)
+        self.assertEqual(cbits, 0x2F) # -3/2
+
+        a = PCPosit(0x35, nbits=nbits, es=es, mode='bits')  # -3/16
+        c = -a
+        cbits = coder.encode_posit_binary(c.rep)
+        self.assertEqual(cbits, 0x0B) # 3/16
 
 
     @unittest.skip("Not implemented.")
