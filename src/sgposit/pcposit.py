@@ -115,7 +115,10 @@ class PCPosit:
 
 
     def __neg__(self):
-        raise NotImplementedError
+        p = PCPosit(self)
+        if p.rep['t'] == 'n':
+            p.rep['s'] = p.rep['s'] ^ 1
+        return p
 
 
     def __mul__(self, other):
