@@ -37,9 +37,9 @@ class PCPosit:
             return
         elif isinstance(v, PCPosit):
             if nbits is not None and v.rep['nbits'] != nbits:
-                    raise NotImplementedError('Mismatched nbits posit conversion is not implemented.')
+                raise NotImplementedError('Mismatched nbits posit conversion is not implemented.')
             if es is not None and v.rep['es'] != es:
-                    raise NotImplementedError('Mismatched es posit conversion is not implemented.')
+                raise NotImplementedError('Mismatched es posit conversion is not implemented.')
             self.rep = copy.deepcopy(v.rep)
             return
         elif mode == 'bits':
