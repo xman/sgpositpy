@@ -126,7 +126,55 @@ class PCPosit:
 
 
     def __mul__(self, other):
-        raise NotImplementedError
+        if self.rep['t'] == 'c' or other.rep['t'] == 'c':
+            p = PCPosit() # FIXME: Use constructor to directly initialized to posit zero.
+            p.rep = coder.create_cinf_positrep(nbits=self.rep['nbits'], es=self.rep['es'])
+            return p
+        elif self.rep['t'] == 'z' or other.rep['t'] == 'z':
+            p = PCPosit() # FIXME
+            p.rep = coder.create_zero_positrep(nbits=self.rep['nbits'], es=self.rep['es'])
+            return p
+
+        assert self.rep['t'] == 'n' and other.rep['t'] == 'n'
+
+        xa = ( -1)**self.rep['s'] * ( 2**self.rep['h'] +  self.rep['f'])
+        xb = (-1)**other.rep['s'] * (2**other.rep['h'] + other.rep['f'])
+        ma =  2**self.rep['es'] *  self.rep['k'] +  self.rep['e'] -  self.rep['h']
+        mb = 2**other.rep['es'] * other.rep['k'] + other.rep['e'] - other.rep['h']
+
+        xc = xa * xb
+        mc = ma + mb
+
+        pc = PCPosit() # FIXME
+        pc.rep = coder.create_zero_positrep(nbits=self.rep['nbits'], es=self.rep['es'])
+        pc.rep['t'] = 'n'
+
+        if xc < 0:
+            xc = -xc
+            pc.rep['s'] = 1
+
+        while xc != 0 and xc % 2 == 0:
+            xc >>= 1
+            mc += 1
+
+        g = 0
+        x = xc
+        while x >= 2:
+            x >>= 1
+            g -= 1
+
+        assert x >= 1 and x < 2, "x={}".format(x)
+
+        pc.rep['e'] = (mc - g) % 2**pc.rep['es']
+        pc.rep['k'] = (mc - g) // 2**pc.rep['es']
+
+        pc.rep['h'] = -g
+        pc.rep['f'] = xc - 2**pc.rep['h']
+
+        bits = coder.encode_posit_binary(pc.rep)
+        pc.rep = coder.decode_posit_binary(bits, nbits=pc.rep['nbits'], es=pc.rep['es'])
+
+        return pc
 
 
     def __truediv__(self, other):
