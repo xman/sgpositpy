@@ -111,7 +111,8 @@ class PCPosit:
 
 
     def __sub__(self, other):
-        raise NotImplementedError
+        p = -PCPosit(other)
+        return self + p
 
 
     def __neg__(self):
