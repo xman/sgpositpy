@@ -36,58 +36,72 @@ class TestPCPosit(unittest.TestCase):
         pass
 
 
+    @unittest.skip("Not implemented.")
     def test_add(self):
         raise NotImplementedError
 
 
+    @unittest.skip("Not implemented.")
     def test_sub(self):
         raise NotImplementedError
 
 
+    @unittest.skip("Not implemented.")
     def test_neg(self):
         raise NotImplementedError
 
 
+    @unittest.skip("Not implemented.")
     def test_mul(self):
         raise NotImplementedError
 
 
+    @unittest.skip("Not implemented.")
     def test_truediv(self):
         raise NotImplementedError
 
 
+    @unittest.skip("Not implemented.")
     def test_floordiv(self):
         raise NotImplementedError
 
 
+    @unittest.skip("Not implemented.")
     def test_eq(self):
         raise NotImplementedError
 
 
+    @unittest.skip("Not implemented.")
     def test_ne(self):
         raise NotImplementedError
 
 
+    @unittest.skip("Not implemented.")
     def test_lt(self):
         raise NotImplementedError
 
 
+    @unittest.skip("Not implemented.")
     def test_le(self):
         raise NotImplementedError
 
 
+    @unittest.skip("Not implemented.")
     def test_gt(self):
         raise NotImplementedError
 
 
+    @unittest.skip("Not implemented.")
     def test_ge(self):
         raise NotImplementedError
 
 
+    @unittest.skip("Not implemented.")
     def test_str(self):
         raise NotImplementedError
 
 
+    @unittest.skip("Not implemented.")
     def test_repr(self):
         raise NotImplementedError
 
