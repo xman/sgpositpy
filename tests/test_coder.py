@@ -147,5 +147,25 @@ class TestCoder(unittest.TestCase):
             self.assertEqual(encoded_bits, bits)
 
 
+    def test_create_zero_positrep(self):
+        nbits = 6
+        es = 2
+        rep = create_zero_positrep(nbits, es)
+        self.assertEqual(rep['t'], 'z')
+
+        bits = encode_posit_binary(rep)
+        self.assertEqual(bits, 0)
+
+
+    def test_create_cinf_positrep(self):
+        nbits = 6
+        es = 2
+        rep = create_cinf_positrep(nbits, es)
+        self.assertEqual(rep['t'], 'c')
+
+        bits = encode_posit_binary(rep)
+        self.assertEqual(bits, 1 << (nbits-1))
+
+
 if __name__ == '__main__':
     unittest.main()
