@@ -3,10 +3,11 @@ environment:
         - PYTHON: "C:\\Python27-x64"
         - PYTHON: "C:\\Python36-x64"
 
-build:
 before_build:
 after_build:
 build_script:
+
+build: off
 
 install:
     - "python -m pip install -r requirements.txt"
