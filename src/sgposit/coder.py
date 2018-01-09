@@ -145,7 +145,7 @@ def encode_posit_binary(rep):
         value = rep['e'] * 2**rep['h'] + rep['f']
         represented_value = te * 2**rep['h']
         truncation = value - represented_value
-        tie = 2**(te + 1 + rep['h'])
+        tie = 2**(m + rep['h'] - 1)
 
         te >>= m        # Truncated exponent bits.
         bits <<= n
