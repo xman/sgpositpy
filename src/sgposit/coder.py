@@ -21,6 +21,8 @@
 # SOFTWARE.
 
 
+import copy
+
 from sgposit import bitops
 
 
@@ -34,6 +36,10 @@ def create_zero_positrep(nbits=32, es=2):
 
 def create_cinf_positrep(nbits=32, es=2):
     return create_positrep(nbits=nbits, es=es, s=0, k=0, e=0, f=0, h=0, t='c')
+
+
+def copy_positrep(rep):
+    return copy.deepcopy(rep)
 
 
 def decode_posit_binary(bits, nbits, es):
