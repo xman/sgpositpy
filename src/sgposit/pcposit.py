@@ -107,6 +107,9 @@ class PCPosit:
         pc.rep['h'] = -g
         pc.rep['f'] = xc - 2**pc.rep['h']
 
+        bits = coder.encode_posit_binary(pc.rep)
+        pc.rep = coder.decode_posit_binary(bits, nbits=pc.rep['nbits'], es=pc.rep['es'])
+
         return pc
 
 
