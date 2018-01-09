@@ -167,5 +167,14 @@ class TestCoder(unittest.TestCase):
         self.assertEqual(bits, 1 << (nbits-1))
 
 
+    def test_copy_positrep(self):
+        nbits = 6
+        es = 2
+        rep1 = create_positrep()
+        rep2 = copy_positrep(rep1)
+        self.assertEqual(rep1, rep2)
+        self.assertIsNot(rep1, rep2)
+
+
 if __name__ == '__main__':
     unittest.main()
