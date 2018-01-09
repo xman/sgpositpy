@@ -21,12 +21,35 @@
 # SOFTWARE.
 
 
+import copy
+
+from sgposit import coder
+
+
+"""
+Provably correct posit number arithmetic.
+"""
 class PCPosit:
 
-    def __init__(self, v, nbits=32, es=2):
-        self.nbits = nbits
-        self.es = es
-        self.u = 2**(2**es)
+    def __init__(self, v=None, mode=None, nbits=None, es=None):
+        if v is None:
+            self.rep = coder.create_positrep(nbits=nbits, es=es, t='z')
+            return
+        elif isinstance(v, PCPosit):
+            if nbits is not None and v.rep['nbits'] != nbits:
+                    raise NotImplementedError('Mismatched nbits posit conversion is not implemented.')
+            if es is not None and v.rep['es'] != es:
+                    raise NotImplementedError('Mismatched es posit conversion is not implemented.')
+            self.rep = copy.deepcopy(v.rep)
+            return
+        elif mode == 'bits':
+            if isinstance(v, int):
+                self.rep = coder.decode_posit_binary(v, nbits=nbits, es=es)
+                return
+            elif isinstance(v, str):
+                raise NotImplementedError('Binary bit string posit conversion is not implemented.')
+
+        raise ValueError('Input is not supported.')
 
 
     def __add__(self, other):
