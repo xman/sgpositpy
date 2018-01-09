@@ -114,9 +114,39 @@ class TestPCPosit(unittest.TestCase):
                             self.assertTrue(cratiodiffmp <= c1ratiodiffmp or cabsdiffmp <= c1absdiffmp)
 
 
-    @unittest.skip("Not implemented.")
-    def test_sub(self):
-        raise NotImplementedError
+    def test_sub_simple(self):
+        nbits = 6
+        es = 2
+
+        a = PCPosit(0x11, nbits=nbits, es=es, mode='bits')  #  3/2
+        b = PCPosit(0x11, nbits=nbits, es=es, mode='bits')  #  3/2
+        c = a - b
+        cbits = coder.encode_posit_binary(c.rep)
+        self.assertEqual(cbits, 0x00) #  0
+
+        a = PCPosit(0x0C, nbits=nbits, es=es, mode='bits')  #  1/4
+        b = PCPosit(0x0F, nbits=nbits, es=es, mode='bits')  #  3/4
+        c = a - b
+        cbits = coder.encode_posit_binary(c.rep)
+        self.assertEqual(cbits, 0x32) # -1/2
+
+        a = PCPosit(0x0A, nbits=nbits, es=es, mode='bits')  #  1/8
+        b = PCPosit(0x35, nbits=nbits, es=es, mode='bits')  # -3/16
+        c = a - b
+        cbits = coder.encode_posit_binary(c.rep)
+        self.assertEqual(cbits, 0x0C) #  5/16 ~> 1/4
+
+        a = PCPosit(0x0D, nbits=nbits, es=es, mode='bits')  #  3/8
+        b = PCPosit(0x0F, nbits=nbits, es=es, mode='bits')  #  3/4
+        c = a - b
+        cbits = coder.encode_posit_binary(c.rep)
+        self.assertEqual(cbits, 0x33) # -3/8
+
+        a = PCPosit(0x11, nbits=nbits, es=es, mode='bits')  #  3/2
+        b = PCPosit(0x10, nbits=nbits, es=es, mode='bits')  #  1
+        c = a - b
+        cbits = coder.encode_posit_binary(c.rep)
+        self.assertEqual(cbits, 0x0E) #  1/2
 
 
     def test_neg_simple(self):
