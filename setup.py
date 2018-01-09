@@ -15,5 +15,7 @@ setup(
         'dev' : [],
         'test': [],
     },
+    tests_require=[],
+    test_suite="tests",
     packages=find_packages(exclude=['build', 'docs', 'samples', 'tests']),
 )
