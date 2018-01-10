@@ -40,9 +40,12 @@ class TestPCPosit(unittest.TestCase):
         mp.dps = 1000
 
         self.posit_n6e2_m1o16_bits = 0x38
+        self.posit_n6e2_m1o2_bits = 0x32
+        self.posit_n6e2_m3o8_bits = 0x33
         self.posit_n6e2_m3o16_bits = 0x35
 
         self.posit_n6e2_1_bits = 0x10
+        self.posit_n6e2_1o2_bits = 0x0E
         self.posit_n6e2_1o4_bits = 0x0C
         self.posit_n6e2_1o8_bits = 0x0A
         self.posit_n6e2_2_bits = 0x12
@@ -124,38 +127,11 @@ class TestPCPosit(unittest.TestCase):
 
 
     def test_sub_simple(self):
-        nbits = 6
-        es = 2
-
-        a = PCPosit(0x11, nbits=nbits, es=es, mode='bits')  #  3/2
-        b = PCPosit(0x11, nbits=nbits, es=es, mode='bits')  #  3/2
-        c = a - b
-        cbits = coder.encode_posit_binary(c.rep)
-        self.assertEqual(cbits, 0x00) #  0
-
-        a = PCPosit(0x0C, nbits=nbits, es=es, mode='bits')  #  1/4
-        b = PCPosit(0x0F, nbits=nbits, es=es, mode='bits')  #  3/4
-        c = a - b
-        cbits = coder.encode_posit_binary(c.rep)
-        self.assertEqual(cbits, 0x32) # -1/2
-
-        a = PCPosit(0x0A, nbits=nbits, es=es, mode='bits')  #  1/8
-        b = PCPosit(0x35, nbits=nbits, es=es, mode='bits')  # -3/16
-        c = a - b
-        cbits = coder.encode_posit_binary(c.rep)
-        self.assertEqual(cbits, 0x0C) #  5/16 ~> 1/4
-
-        a = PCPosit(0x0D, nbits=nbits, es=es, mode='bits')  #  3/8
-        b = PCPosit(0x0F, nbits=nbits, es=es, mode='bits')  #  3/4
-        c = a - b
-        cbits = coder.encode_posit_binary(c.rep)
-        self.assertEqual(cbits, 0x33) # -3/8
-
-        a = PCPosit(0x11, nbits=nbits, es=es, mode='bits')  #  3/2
-        b = PCPosit(0x10, nbits=nbits, es=es, mode='bits')  #  1
-        c = a - b
-        cbits = coder.encode_posit_binary(c.rep)
-        self.assertEqual(cbits, 0x0E) #  1/2
+        self.run_posit_op(self.posit_n6e2_3o2_bits, '-', self.posit_n6e2_3o2_bits, 0, 6, 2)
+        self.run_posit_op(self.posit_n6e2_1o4_bits, '-', self.posit_n6e2_3o4_bits, self.posit_n6e2_m1o2_bits, 6, 2)
+        self.run_posit_op(self.posit_n6e2_1o8_bits, '-', self.posit_n6e2_m3o16_bits, self.posit_n6e2_1o4_bits, 6, 2) # result: 5/16 ~> 1/4
+        self.run_posit_op(self.posit_n6e2_3o8_bits, '-', self.posit_n6e2_3o4_bits, self.posit_n6e2_m3o8_bits, 6, 2)
+        self.run_posit_op(self.posit_n6e2_3o2_bits, '-', self.posit_n6e2_1_bits, self.posit_n6e2_1o2_bits, 6, 2)
 
 
     # (a op b) rounded to nearest tests, with reference to mpmath computed results.
