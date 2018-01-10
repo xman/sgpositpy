@@ -29,7 +29,16 @@ from sgposit.coder import *
 class TestCoder(unittest.TestCase):
 
     def setUp(self):
-        pass
+        self.posit_n6e0_some_bits = 0x0022
+
+        self.posit_n8e1_zero_bits = 0
+
+        self.posit_n16e2_some_bits = 0x00AC
+        self.posit_n16e3_cinf_bits = 0x8000
+
+        self.posit_n19e1_some_bits = 0x60000
+
+        self.posit_n23e1_cinf_bits = 0x400000
 
 
     def tearDown(self):
