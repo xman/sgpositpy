@@ -43,6 +43,7 @@ class TestPCPosit(unittest.TestCase):
         self.posit_n6e2_m1o2_bits = 0x32
         self.posit_n6e2_m1o64_bits = 0x3A
         self.posit_n6e2_m3o2_bits = 0x2F
+        self.posit_n6e2_m3o4_bits = 0x31
         self.posit_n6e2_m3o8_bits = 0x33
         self.posit_n6e2_m3o16_bits = 0x35
 
@@ -218,9 +219,12 @@ class TestPCPosit(unittest.TestCase):
         self.run_posit_op(self.posit_n6e2_3o2_bits, '*', self.posit_n6e2_1_bits, self.posit_n6e2_3o2_bits, 6, 2)
 
 
-    @unittest.skip("Not implemented.")
-    def test_truediv(self):
-        raise NotImplementedError
+    def test_truediv_simple(self):
+        self.run_posit_op(self.posit_n6e2_3o2_bits, '/', self.posit_n6e2_3o2_bits, self.posit_n6e2_1_bits, 6, 2)
+        self.run_posit_op(self.posit_n6e2_1o4_bits, '/', self.posit_n6e2_3o4_bits, self.posit_n6e2_3o8_bits, 6, 2)
+        self.run_posit_op(self.posit_n6e2_1o8_bits, '/', self.posit_n6e2_m3o16_bits, self.posit_n6e2_m3o4_bits, 6, 2)
+        self.run_posit_op(self.posit_n6e2_3o8_bits, '/', self.posit_n6e2_3o4_bits, self.posit_n6e2_1o2_bits, 6, 2)
+        self.run_posit_op(self.posit_n6e2_3o2_bits, '/', self.posit_n6e2_1_bits, self.posit_n6e2_3o2_bits, 6, 2)
 
 
     @unittest.skip("Not implemented.")
