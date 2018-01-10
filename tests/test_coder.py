@@ -30,6 +30,9 @@ class TestCoder(unittest.TestCase):
 
     def setUp(self):
         self.posit_n6e0_some_bits = 0x0022
+        self.posit_n6e2_m128_bits = 0x0025      # bits=0x0025, nbits=6, es=2, value=-128
+        self.posit_n6e2_3o32_bits = 0x0009      # bits=0x0009, nbits=6, es=2, value=3/32
+        self.posit_n6e2_6_bits = 0x0015         # bits=0x0015, nbits=6, es=2, value=6
 
         self.posit_n8e1_zero_bits = 0
 
