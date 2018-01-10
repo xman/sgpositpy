@@ -13,7 +13,7 @@ setup(
     install_requires=[],
     extras_require={
         'dev' : [],
-        'test': [],
+        'test': ['nose'],
     },
     tests_require=['mpmath'],
     test_suite="tests",
