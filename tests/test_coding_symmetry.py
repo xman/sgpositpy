@@ -21,6 +21,7 @@
 # SOFTWARE.
 
 
+import os
 import unittest
 
 from sgposit.coder import *
@@ -99,6 +100,43 @@ class TestCodingSymmetry(unittest.TestCase):
         self.run_encoding_decoding_symmetry(nbits=6, es=6)
     def test_encoding_decoding_symmetry_n6e7(self):
         self.run_encoding_decoding_symmetry(nbits=6, es=7)
+
+    def test_encoding_decoding_symmetry_n16e0(self):
+        self.run_encoding_decoding_symmetry(nbits=16, es=0)
+    def test_encoding_decoding_symmetry_n16e1(self):
+        self.run_encoding_decoding_symmetry(nbits=16, es=1)
+    def test_encoding_decoding_symmetry_n16e2(self):
+        self.run_encoding_decoding_symmetry(nbits=16, es=2)
+    def test_encoding_decoding_symmetry_n16e3(self):
+        self.run_encoding_decoding_symmetry(nbits=16, es=3)
+    def test_encoding_decoding_symmetry_n16e4(self):
+        self.run_encoding_decoding_symmetry(nbits=16, es=4)
+    def test_encoding_decoding_symmetry_n16e5(self):
+        self.run_encoding_decoding_symmetry(nbits=16, es=5)
+    def test_encoding_decoding_symmetry_n16e6(self):
+        self.run_encoding_decoding_symmetry(nbits=16, es=6)
+    def test_encoding_decoding_symmetry_n16e7(self):
+        self.run_encoding_decoding_symmetry(nbits=16, es=7)
+    def test_encoding_decoding_symmetry_n16e8(self):
+        self.run_encoding_decoding_symmetry(nbits=16, es=8)
+    def test_encoding_decoding_symmetry_n16e9(self):
+        self.run_encoding_decoding_symmetry(nbits=16, es=9)
+    def test_encoding_decoding_symmetry_n16e10(self):
+        self.run_encoding_decoding_symmetry(nbits=16, es=10)
+    def test_encoding_decoding_symmetry_n16e11(self):
+        self.run_encoding_decoding_symmetry(nbits=16, es=11)
+    def test_encoding_decoding_symmetry_n16e12(self):
+        self.run_encoding_decoding_symmetry(nbits=16, es=12)
+    def test_encoding_decoding_symmetry_n16e13(self):
+        self.run_encoding_decoding_symmetry(nbits=16, es=13)
+    def test_encoding_decoding_symmetry_n16e14(self):
+        self.run_encoding_decoding_symmetry(nbits=16, es=14)
+    def test_encoding_decoding_symmetry_n16e15(self):
+        self.run_encoding_decoding_symmetry(nbits=16, es=15)
+    def test_encoding_decoding_symmetry_n16e16(self):
+        self.run_encoding_decoding_symmetry(nbits=16, es=16)
+    def test_encoding_decoding_symmetry_n16e17(self):
+        self.run_encoding_decoding_symmetry(nbits=16, es=17)
 
 
 if __name__ == '__main__':
