@@ -36,6 +36,8 @@ class TestCoder(unittest.TestCase):
 
         self.posit_n8e1_zero_bits = 0
 
+        self.posit_n10e3_cinf_bits = 0x0200
+
         self.posit_n16e2_some_bits = 0x00AC
         self.posit_n16e3_cinf_bits = 0x8000
 
@@ -94,25 +96,25 @@ class TestCoder(unittest.TestCase):
         # cinf
         rep = { 's': 0, 'k': 0, 'e': 0, 'f': 0, 'h': 0, 'nbits': 10, 'es': 3, 't': 'c' }
         bits = encode_posit_binary(rep)
-        self.assertEqual(bits, 0x0200)
+        self.assertEqual(bits, self.posit_n10e3_cinf_bits)
 
         rep = { 's': 1, 'k': 1, 'e': 0, 'f': 0, 'h': 0, 'nbits': 10, 'es': 3, 't': 'n' }
         bits = encode_posit_binary(rep)
-        self.assertNotEqual(bits, 0x0200)
+        self.assertNotEqual(bits, self.posit_n10e3_cinf_bits)
 
 
     def test_encode_posit_binary_normal(self):
         rep = { 's': 1, 'k': 1, 'e': 3, 'f': 0, 'h': 0, 'nbits': 6, 'es': 2, 't': 'n' }
         bits = encode_posit_binary(rep)
-        self.assertEqual(bits, 0x0025)
+        self.assertEqual(bits, self.posit_n6e2_m128_bits)
 
         rep = { 's': 0, 'k': -1, 'e': 0, 'f': 1, 'h': 1, 'nbits': 6, 'es': 2, 't': 'n' }
         bits = encode_posit_binary(rep)
-        self.assertEqual(bits, 0x0009)
+        self.assertEqual(bits, self.posit_n6e2_3o32_bits)
 
         rep = { 's': 0, 'k': 0, 'e': 2, 'f': 1, 'h': 1, 'nbits': 6, 'es': 2, 't': 'n' }
         bits = encode_posit_binary(rep)
-        self.assertEqual(bits, 0x0015)
+        self.assertEqual(bits, self.posit_n6e2_6_bits)
 
 
     def test_positrep_to_str(self):
