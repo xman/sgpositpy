@@ -178,7 +178,61 @@ class PCPosit:
 
 
     def __truediv__(self, other):
-        raise NotImplementedError
+        if self.rep['t'] == 'c' or other.rep['t'] == 'z':
+            p = PCPosit() # FIXME: Use constructor to directly initialized to posit zero.
+            p.rep = coder.create_cinf_positrep(nbits=self.rep['nbits'], es=self.rep['es'])
+            return p
+        elif self.rep['t'] == 'z' or other.rep['t'] == 'c':
+            p = PCPosit() # FIXME
+            p.rep = coder.create_zero_positrep(nbits=self.rep['nbits'], es=self.rep['es'])
+            return p
+
+        assert self.rep['t'] == 'n' and other.rep['t'] == 'n'
+
+        xa = ( -1)**self.rep['s'] * ( 2**self.rep['h'] +  self.rep['f'])
+        xb = (-1)**other.rep['s'] * (2**other.rep['h'] + other.rep['f'])
+        ma =  2**self.rep['es'] *  self.rep['k'] +  self.rep['e'] -  self.rep['h']
+        mb = 2**other.rep['es'] * other.rep['k'] + other.rep['e'] - other.rep['h']
+
+        pc = PCPosit() # FIXME
+        pc.rep = coder.create_zero_positrep(nbits=self.rep['nbits'], es=self.rep['es'])
+        pc.rep['t'] = 'n'
+
+        if (xa < 0) ^ (xb < 0): pc.rep['s'] = 1
+        if xa < 0: xa = -xa
+        if xb < 0: xb = -xb
+
+        g = ma - mb + (2**pc.rep['es'])*(pc.rep['nbits']-2) + pc.rep['nbits'] - 1
+        g = max(0, g)
+        xc = (xa * 2**g) // xb
+        mc = ma - mb - g
+
+        if xc != 0:
+            while xc != 0 and xc % 2 == 0:
+                xc >>= 1
+                mc += 1
+
+            g = 0
+            x = xc
+            while x >= 2:
+                x >>= 1
+                g -= 1
+
+            assert x >= 1 and x < 2, "x={}".format(x)
+
+            pc.rep['e'] = (mc - g) % 2**pc.rep['es']
+            pc.rep['k'] = (mc - g) // 2**pc.rep['es']
+
+            pc.rep['h'] = -g
+            pc.rep['f'] = xc - 2**pc.rep['h']
+
+        else:
+            pc.rep = coder.create_zero_positrep(nbits=self.rep['nbits'], es=self.rep['es'])
+
+        bits = coder.encode_posit_binary(pc.rep)
+        pc.rep = coder.decode_posit_binary(bits, nbits=pc.rep['nbits'], es=pc.rep['es'])
+
+        return pc
 
 
     def __floordiv__(self, other):
