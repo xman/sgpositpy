@@ -141,13 +141,15 @@ class TestCoder(unittest.TestCase):
         self.assertEqual(repstr, '0')
 
 
-    def test_encoding_decoding_symmetry_n6es2(self):
-        nbits = 6
-        es = 2
+    def run_encoding_decoding_symmetry(self, nbits=None, es=None):
         for bits in range(2**nbits):
             rep = decode_posit_binary(bits, nbits, es)
             encoded_bits = encode_posit_binary(rep)
             self.assertEqual(encoded_bits, bits)
+
+
+    def test_encoding_decoding_symmetry_n6es2(self):
+        self.run_encoding_decoding_symmetry(nbits=6, es=2)
 
 
     def test_create_zero_positrep(self):
