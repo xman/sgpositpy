@@ -105,6 +105,18 @@ class TestPCPositExhaustive(unittest.TestCase):
     def test_add_exhaustive(self):
         self.run_posit_2op_exhaustive('+', nbits_range=range(2,9), es_range=range(0,3))
 
+    @unittest.skipUnless(os.environ.get('SGPOSIT_LONG_TESTS') == '1', 'Long test.')
+    def test_sub_exhaustive(self):
+        self.run_posit_2op_exhaustive('-', nbits_range=range(2,9), es_range=range(0,3))
+
+    @unittest.skipUnless(os.environ.get('SGPOSIT_LONG_TESTS') == '1', 'Long test.')
+    def test_mul_exhaustive(self):
+        self.run_posit_2op_exhaustive('*', nbits_range=range(2,9), es_range=range(0,3))
+
+    @unittest.skipUnless(os.environ.get('SGPOSIT_LONG_TESTS') == '1', 'Long test.')
+    def test_truediv_exhaustive(self):
+        self.run_posit_2op_exhaustive('/', nbits_range=range(2,9), es_range=range(0,3))
+
 
 if __name__ == '__main__':
     unittest.main()
