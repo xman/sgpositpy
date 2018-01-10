@@ -29,6 +29,9 @@ from sgposit.coder import *
 
 class TestCodingSymmetry(unittest.TestCase):
 
+    _multiprocess_can_split_ = True
+
+
     def run_encoding_decoding_symmetry(self, nbits=None, es=None):
         for bits in range(2**nbits):
             rep = decode_posit_binary(bits, nbits, es)
