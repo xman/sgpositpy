@@ -69,7 +69,7 @@ The `PCPosit` class is our reference implementation with extensive regression
 tests. We shall have performance optimized version in `Posit` class for general
 use in the future.
 
-The following code snippet create posit objects from the given bit patterns,
+The following code snippet creates posit objects from the given bit patterns,
 and the posit configuration, `nbits` and `es`.
 
 .. code:: python
