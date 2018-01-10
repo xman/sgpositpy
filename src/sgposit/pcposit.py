@@ -177,6 +177,10 @@ class PCPosit:
         return pc
 
 
+    def __div__(self, other):
+        return self.__truediv__(other)
+
+
     def __truediv__(self, other):
         if self.rep['t'] == 'c' or other.rep['t'] == 'z':
             p = PCPosit() # FIXME: Use constructor to directly initialized to posit zero.
