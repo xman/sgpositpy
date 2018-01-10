@@ -41,6 +41,7 @@ class TestPCPosit(unittest.TestCase):
 
         self.posit_n6e2_m1o16_bits = 0x38
         self.posit_n6e2_m1o2_bits = 0x32
+        self.posit_n6e2_m3o2_bits = 0x2F
         self.posit_n6e2_m3o8_bits = 0x33
         self.posit_n6e2_m3o16_bits = 0x35
 
@@ -52,6 +53,7 @@ class TestPCPosit(unittest.TestCase):
         self.posit_n6e2_3_bits = 0x13
         self.posit_n6e2_3o2_bits = 0x11
         self.posit_n6e2_3o4_bits = 0x0F
+        self.posit_n6e2_3o16_bits = 0x0B
         self.posit_n6e2_3o8_bits = 0x0D
 
 
@@ -169,18 +171,8 @@ class TestPCPosit(unittest.TestCase):
 
 
     def test_neg_simple(self):
-        nbits = 6
-        es = 2
-
-        a = PCPosit(0x11, nbits=nbits, es=es, mode='bits')  #  3/2
-        c = -a
-        cbits = coder.encode_posit_binary(c.rep)
-        self.assertEqual(cbits, 0x2F) # -3/2
-
-        a = PCPosit(0x35, nbits=nbits, es=es, mode='bits')  # -3/16
-        c = -a
-        cbits = coder.encode_posit_binary(c.rep)
-        self.assertEqual(cbits, 0x0B) # 3/16
+        self.run_posit_op(self.posit_n6e2_3o2_bits, 'u-', None, self.posit_n6e2_m3o2_bits, 6, 2)
+        self.run_posit_op(self.posit_n6e2_m3o16_bits, 'u-', None, self.posit_n6e2_3o16_bits, 6, 2)
 
 
     @unittest.skip("Not implemented.")
