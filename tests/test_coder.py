@@ -47,29 +47,23 @@ class TestCoder(unittest.TestCase):
 
     def test_decode_posit_binary_special(self):
         # zero
-        bits = 0
-        rep = decode_posit_binary(bits, 8, 1)
+        rep = decode_posit_binary(0, 8, 1)
         self.assertEqual(rep['t'], 'z')
 
-        bits = 0x00AC
-        rep = decode_posit_binary(bits, 16, 2)
+        rep = decode_posit_binary(self.posit_n16e2_some_bits, 16, 2)
         self.assertNotEqual(rep['t'], 'z')
 
         # cinf
-        bits = 0x8000
-        rep = decode_posit_binary(bits, 16, 3)
+        rep = decode_posit_binary(self.posit_n16e3_cinf_bits, 16, 3)
         self.assertEqual(rep['t'], 'c')
 
-        bits = 0x400000
-        rep = decode_posit_binary(bits, 23, 1)
+        rep = decode_posit_binary(self.posit_n23e1_cinf_bits, 23, 1)
         self.assertEqual(rep['t'], 'c')
 
-        bits = 0x60000
-        rep = decode_posit_binary(bits, 19, 1)
+        rep = decode_posit_binary(self.posit_n19e1_some_bits, 19, 1)
         self.assertNotEqual(rep['t'], 'c')
 
-        bits = 0x0022
-        rep = decode_posit_binary(bits, 6, 0)
+        rep = decode_posit_binary(self.posit_n6e0_some_bits, 6, 0)
         self.assertNotEqual(rep['t'], 'c')
 
 
