@@ -40,7 +40,7 @@ e = a * b
 print("{} * {} => {}".format(a, b, e))
 
 f = a / b
-print("{} + {} => {}".format(a, b, f))
+print("{} / {} => {}".format(a, b, f))
 
 g = -a
 print("uminus {} => {}".format(a, g))
