@@ -1,9 +1,9 @@
 sgpositpy
 =========
-
 .. image:: https://badges.gitter.im/sgpositpy/Lobby.svg
    :alt: Join the chat at https://gitter.im/sgpositpy/Lobby
    :target: https://gitter.im/sgpositpy/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
+
 .. image:: https://travis-ci.org/xman/sgpositpy.svg?branch=master
    :alt: sgpositpy regression test status on Travis CI
    :target: https://travis-ci.org/xman/sgpositpy
