@@ -91,12 +91,12 @@ class TestPCPositExhaustive(unittest.TestCase):
                       rcmp = mp.mpf(eval(coder.positrep_to_rational_str(roundedc)))
                       cratiodiffmp = mp.fabs(mp.log(rcmp/c2mp)) if c2mp != 0 else mp.fabs(rcmp - c2mp)
                       cabsdiffmp = mp.fabs(rcmp - c2mp)
-                      if c0.rep['t'] == 'n':
+                      if c0.rep['t'] != 'c':
                           c0mp = mp.mpf(eval(coder.positrep_to_rational_str(c0.rep)))
                           c0ratiodiffmp = mp.fabs(mp.log(c0mp/c2mp)) if c2mp != 0 else mp.fabs(c0mp - c2mp)
                           c0absdiffmp = mp.fabs(c0mp - c2mp)
                           self.assertTrue(cratiodiffmp <= c0ratiodiffmp or cabsdiffmp <= c0absdiffmp)
-                      if c1.rep['t'] == 'n':
+                      if c1.rep['t'] != 'c':
                           c1mp = mp.mpf(eval(coder.positrep_to_rational_str(c1.rep)))
                           c1ratiodiffmp = mp.fabs(mp.log(c1mp/c2mp)) if c2mp != 0 else mp.fabs(c1mp - c2mp)
                           c1absdiffmp = mp.fabs(c1mp - c2mp)
