@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='sgposit',
-    version='0.0.1.dev4',
+    version='0.0.1.dev5',
     description='Posit arithmetic library for python',
     keywords='posit arithmetic',
     author='SpeedGo Computing',
