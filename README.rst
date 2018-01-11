@@ -74,6 +74,8 @@ and the posit configuration, `nbits` and `es`.
 
 .. code:: python
 
+    # file: samples/pcposit_sample.py
+
     from sgposit.pcposit import PCPosit
 
     a = PCPosit(0x0C, mode='bits', nbits=6, es=2)
@@ -93,6 +95,16 @@ and the posit configuration, `nbits` and `es`.
 
     g = -a
     print("uminus {} => {}".format(a, g))
+
+
+.. code:: bash
+
+    $ python samples/pcposit_sample.py
+    2/8 + 3/4 => 1
+    2/8 - 3/4 => -2/4
+    2/8 * 3/4 => 3/16
+    2/8 + 3/4 => 3/8
+    uminus 2/8 => -2/8
 
 
 License
