@@ -79,8 +79,8 @@ class TestPCPositExhaustive(unittest.TestCase):
                   c = op(a, b)
 
                   if a.rep['t'] == 'n' and b.rep['t'] == 'n':
-                      amp = mp.mpf(eval(coder.positrep_to_str(a.rep)))
-                      bmp = mp.mpf(eval(coder.positrep_to_str(b.rep)))
+                      amp = mp.mpf(eval(coder.positrep_to_rational_str(a.rep)))
+                      bmp = mp.mpf(eval(coder.positrep_to_rational_str(b.rep)))
                       c2mp = mpop(amp, bmp)
                       c0 = PCPosit((bbits-1) & mask, nbits=nbits, es=es, mode='bits')
                       c1 = PCPosit((bbits+1) & mask, nbits=nbits, es=es, mode='bits')
@@ -88,16 +88,16 @@ class TestPCPositExhaustive(unittest.TestCase):
                       cbits = coder.encode_posit_binary(c.rep)
                       roundedc = coder.decode_posit_binary(cbits, nbits=nbits, es=es)
 
-                      rcmp = mp.mpf(eval(coder.positrep_to_str(roundedc)))
+                      rcmp = mp.mpf(eval(coder.positrep_to_rational_str(roundedc)))
                       cratiodiffmp = mp.fabs(mp.log(rcmp/c2mp)) if c2mp != 0 else mp.fabs(rcmp - c2mp)
                       cabsdiffmp = mp.fabs(rcmp - c2mp)
                       if c0.rep['t'] == 'n':
-                          c0mp = mp.mpf(eval(coder.positrep_to_str(c0.rep)))
+                          c0mp = mp.mpf(eval(coder.positrep_to_rational_str(c0.rep)))
                           c0ratiodiffmp = mp.fabs(mp.log(c0mp/c2mp)) if c2mp != 0 else mp.fabs(c0mp - c2mp)
                           c0absdiffmp = mp.fabs(c0mp - c2mp)
                           self.assertTrue(cratiodiffmp <= c0ratiodiffmp or cabsdiffmp <= c0absdiffmp)
                       if c1.rep['t'] == 'n':
-                          c1mp = mp.mpf(eval(coder.positrep_to_str(c1.rep)))
+                          c1mp = mp.mpf(eval(coder.positrep_to_rational_str(c1.rep)))
                           c1ratiodiffmp = mp.fabs(mp.log(c1mp/c2mp)) if c2mp != 0 else mp.fabs(c1mp - c2mp)
                           c1absdiffmp = mp.fabs(c1mp - c2mp)
                           self.assertTrue(cratiodiffmp <= c1ratiodiffmp or cabsdiffmp <= c1absdiffmp)
