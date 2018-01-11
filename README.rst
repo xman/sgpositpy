@@ -100,11 +100,11 @@ and the posit configuration, `nbits` and `es`.
 .. code:: bash
 
     $ python samples/pcposit_sample.py
-    2/8 + 3/4 => 1
-    2/8 - 3/4 => -2/4
-    2/8 * 3/4 => 3/16
-    2/8 + 3/4 => 3/8
-    uminus 2/8 => -2/8
+    1/4 + 3/4 => 1
+    1/4 - 3/4 => -1/2
+    1/4 * 3/4 => 3/16
+    1/4 + 3/4 => 3/8
+    uminus 1/4 => -1/4
 
 
 License
