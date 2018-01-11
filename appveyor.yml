@@ -3,6 +3,11 @@ environment:
         - PYTHON: "C:\\Python27-x64"
         - PYTHON: "C:\\Python36-x64"
 
+branches:
+  only:
+  - master
+  - devtest
+
 before_build:
 after_build:
 build_script:
