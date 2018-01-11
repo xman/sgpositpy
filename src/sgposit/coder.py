@@ -22,7 +22,12 @@
 
 
 import copy
-import math
+import sys
+
+if sys.version_info.major >= 3:
+    from math import gcd
+else:
+    from fractions import gcd
 
 from sgposit import bitops
 
@@ -241,7 +246,7 @@ def positrep_to_str(rep):
         if integral != 0:
             out += str(integral)
             out += '-' if rep['s'] == 1 else '+'
-        g = math.gcd(num, den)
+        g = gcd(num, den)
         num //= g
         den //= g
         out += str(num) + '/' + str(den)
@@ -287,7 +292,7 @@ def positrep_to_rational_str(rep):
         out += str(integral)
     else:
         num += den*integral
-        g = math.gcd(num, den)
+        g = gcd(num, den)
         num //= g
         den //= g
         out += str(num) + '/' + str(den)
