@@ -241,6 +241,9 @@ def positrep_to_str(rep):
         if integral != 0:
             out += str(integral)
             out += '-' if rep['s'] == 1 else '+'
+        g = math.gcd(num, den)
+        num //= g
+        den //= g
         out += str(num) + '/' + str(den)
 
     return out
