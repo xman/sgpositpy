@@ -22,6 +22,7 @@
 
 
 import copy
+import numbers
 import sys
 
 if sys.version_info.major >= 3:
@@ -95,13 +96,12 @@ def decode_posit_binary(bits, nbits, es):
 
 
 def encode_posit_binary(rep):
-    assert rep['nbits'] >= 2
-    assert rep['es'] >= 0
-    assert rep['s'] == 0 or rep['s'] == 1
-    #assert rep['k'] >= -rep['nbits'] + 2 and rep['k'] <= rep['nbits'] - 2, rep
-    assert rep['e'] >= 0 and rep['e'] <= 2**rep['es'] - 1
-    #assert rep['h'] >= 0 and rep['h'] <= max(0, rep['nbits'] - 1 - 2 - rep['es'])
-    assert rep['f'] >= 0 and rep['f'] <= 2**rep['h'] - 1
+    assert isinstance(rep['nbits'], numbers.Integral) and rep['nbits'] >= 2
+    assert isinstance(rep['es'   ], numbers.Integral) and rep['es'] >= 0
+    assert isinstance(rep['s'    ], numbers.Integral) and (rep['s'] == 0 or rep['s'] == 1)
+    assert isinstance(rep['e'    ], numbers.Integral) and rep['e'] >= 0 and rep['e'] <= 2**rep['es'] - 1
+    assert isinstance(rep['h'    ], numbers.Integral) and rep['h'] >= 0
+    assert isinstance(rep['f'    ], numbers.Integral) and rep['f'] >= 0 and rep['f'] <= 2**rep['h'] - 1
     assert rep['t'] in ['c', 'n', 'z']
 
     if rep['t'] == 'z':
@@ -203,6 +203,8 @@ def encode_posit_binary(rep):
         bits = -bits
         mask = bitops.create_mask(rep['nbits'])
         bits &= mask
+
+    assert isinstance(bits, numbers.Integral) and bits >= 0 and bits <= bitops.create_mask(rep['nbits'])
 
     return bits
 
