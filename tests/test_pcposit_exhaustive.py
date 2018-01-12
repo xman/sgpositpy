@@ -71,6 +71,7 @@ class TestPCPositExhaustive(unittest.TestCase):
 
         for nbits in nbits_range:
           mask = bitops.create_mask(nbits)
+          cinf_bits = 1 << (nbits-1)
           for es in es_range:
             for abits in range(2**nbits):
               for bbits in range(2**nbits):
@@ -83,8 +84,17 @@ class TestPCPositExhaustive(unittest.TestCase):
                       amp = mp.mpf(eval(coder.positrep_to_rational_str(a.rep)))
                       bmp = mp.mpf(eval(coder.positrep_to_rational_str(b.rep)))
                       c2mp = mpop(amp, bmp)
-                      c0 = PCPosit((bbits-1) & mask, nbits=nbits, es=es, mode='bits')
-                      c1 = PCPosit((bbits+1) & mask, nbits=nbits, es=es, mode='bits')
+
+                      c0bits = (cbits-1) & mask
+                      while c0bits == 0 or c0bits == cinf_bits:
+                          c0bits = (c0bits-1) & mask
+
+                      c1bits = (cbits+1) & mask
+                      while c1bits == 0 or c1bits == cinf_bits:
+                          c1bits = (c1bits+1) & mask
+
+                      c0 = PCPosit(c0bits, nbits=nbits, es=es, mode='bits')
+                      c1 = PCPosit(c1bits, nbits=nbits, es=es, mode='bits')
 
                       rcmp = mp.mpf(eval(coder.positrep_to_rational_str(c.rep)))
                       cratiodiffmp = mp.fabs(mp.log(rcmp/c2mp)) if c2mp != 0 else mp.fabs(rcmp - c2mp)
