@@ -231,7 +231,12 @@ class PCPosit:
             pc.rep['f'] = xc - 2**pc.rep['h']
 
         else:
-            pc.rep = coder.create_zero_positrep(nbits=self.rep['nbits'], es=self.rep['es'])
+            # round to minpos
+            pc.rep['e'] = 0
+            pc.rep['k'] = -pc.rep['nbits'] + 2
+            pc.rep['h'] = 0
+            pc.rep['f'] = 0
+
 
         bits = coder.encode_posit_binary(pc.rep)
         pc.rep = coder.decode_posit_binary(bits, nbits=pc.rep['nbits'], es=pc.rep['es'])
