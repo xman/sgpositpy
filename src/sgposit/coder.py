@@ -169,37 +169,41 @@ def encode_posit_binary(rep):
 
         rounded = True
 
-    if n >= 0:
-        if n > rep['h']:
-            bits <<= rep['h']
-            bits |= rep['f']
-            n -= rep['h']
+    assert n >= 0
 
-            bits <<= n
-            n = 0
-        elif rounded == False:
-            m = rep['h'] - n    # Number of fractional bits to truncate.
-            tf = rep['f'] >> m
-            tf <<= m            # Rounded down fractional bits.
+    if n > rep['h']:
+        bits <<= rep['h']
+        bits |= rep['f']
+        n -= rep['h']
 
-            value = rep['f']
-            represented_value = tf
-            truncation = value - represented_value
-            tie = 2**(m-1)
+        bits <<= n
+        n = 0
 
-            tf >>= m    # Truncated fractional bits.
-            bits <<= n
-            bits |= tf
-            n = 0
+    elif rounded == False:
+        m = rep['h'] - n    # Number of fractional bits to truncate.
+        tf = rep['f'] >> m
+        tf <<= m            # Rounded down fractional bits.
 
-            if truncation == tie:
-                if bits & 0x01 and bits < maxpos_bits:
-                    bits += 1
-            elif truncation > tie:
-                if bits < maxpos_bits:
-                    bits += 1
+        value = rep['f']
+        represented_value = tf
+        truncation = value - represented_value
+        tie = 2**(m-1)
 
-            rounded = True
+        tf >>= m    # Truncated fractional bits.
+        bits <<= n
+        bits |= tf
+        n = 0
+
+        if truncation == tie:
+            if bits & 0x01 and bits < maxpos_bits:
+                bits += 1
+        elif truncation > tie:
+            if bits < maxpos_bits:
+                bits += 1
+
+        rounded = True
+
+    assert n == 0
 
     if rep['s'] == 1:
         bits = -bits
