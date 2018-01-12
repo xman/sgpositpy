@@ -215,94 +215,77 @@ def encode_posit_binary(rep):
     return bits
 
 
+# rep: normal posit representation,
+# return (sign, intpart, num, den) where number = sign*(intpart + num/den)
+def positrep_normal_to_rational(rep):
+    assert rep['t'] == 'n'
+
+    E = (2**rep['es'] * rep['k']) + rep['e']
+    V = (1 << rep['h']) + rep['f']
+    D = rep['h']
+
+    if E >= 0:
+        V <<= E
+    else:
+        D += -E
+
+    mask = bitops.create_mask(D)
+    num = V & mask
+    den = 1 << D
+    intpart = V >> D
+
+    g = gcd(num, den)
+    num //= g
+    den //= g
+    sign = 1 if rep['s'] == 0 else -1
+
+    assert sign == -1 or sign == 1
+    assert intpart >= 0
+    assert num >= 0
+    assert den >= 1
+
+    return (sign, intpart, num, den)
+
+
+# rational: (sign, intpart, num, den) where number = sign*(intpart + num/den)
+def rational_to_str(rational, separate_intpart=False):
+
+    (sign, intpart, num, den) = rational
+
+    assert sign == -1 or sign == 1
+    assert intpart >= 0
+    assert num >= 0
+    assert den >= 1
+
+    out = '' if sign > 0 else '-'
+
+    if num == 0:
+        out += str(intpart)
+    else:
+        if separate_intpart:
+            if intpart != 0:
+                out += str(intpart)
+                out += '+' if sign > 0 else '-'
+        else:
+            num += den*intpart
+
+        out += str(num) + '/' + str(den)
+
+    return out
+
+
+def positrep_to_rational_str(rep, separate_intpart=False):
+    if rep['t'] == 'z':
+        return '0'
+    elif rep['t'] == 'c':
+        return 'cinf'
+
+    assert rep['t'] == 'n'
+
+    rational = positrep_normal_to_rational(rep)
+
+    return rational_to_str(rational, separate_intpart=separate_intpart)
+
+
 def positrep_to_str(rep):
-    if rep['t'] == 'z':
-        return '0'
-    elif rep['t'] == 'c':
-        return 'cinf'
-
-    assert rep['t'] == 'n'
-
-    out = ''
-    if rep['s'] == 1:
-        out = '-'
-
-    E = (2**rep['es'] * rep['k']) + rep['e']
-    V = (1 << rep['h']) + rep['f']
-    D = rep['h']
-
-    if E >= 0:
-        V <<= E
-    else:
-        D += -E
-
-    mask = bitops.create_mask(D)
-    fraction_bits = V & mask
-    integral = V >> D
-
-    num = 0
-    den = 1
-    for d in range(D):
-        if fraction_bits & 0x01 == 1:
-            num += den
-        den *= 2
-        fraction_bits >>= 1
-
-    if num == 0:
-        out += str(integral)
-    else:
-        if integral != 0:
-            out += str(integral)
-            out += '-' if rep['s'] == 1 else '+'
-        g = gcd(num, den)
-        num //= g
-        den //= g
-        out += str(num) + '/' + str(den)
-
-    return out
-
-
-# FIXME: refactor
-def positrep_to_rational_str(rep):
-    if rep['t'] == 'z':
-        return '0'
-    elif rep['t'] == 'c':
-        return 'cinf'
-
-    assert rep['t'] == 'n'
-
-    out = ''
-    if rep['s'] == 1:
-        out = '-'
-
-    E = (2**rep['es'] * rep['k']) + rep['e']
-    V = (1 << rep['h']) + rep['f']
-    D = rep['h']
-
-    if E >= 0:
-        V <<= E
-    else:
-        D += -E
-
-    mask = bitops.create_mask(D)
-    fraction_bits = V & mask
-    integral = V >> D
-
-    num = 0
-    den = 1
-    for d in range(D):
-        if fraction_bits & 0x01 == 1:
-            num += den
-        den *= 2
-        fraction_bits >>= 1
-
-    if num == 0:
-        out += str(integral)
-    else:
-        num += den*integral
-        g = gcd(num, den)
-        num //= g
-        den //= g
-        out += str(num) + '/' + str(den)
-
-    return out
+    return positrep_to_rational_str(rep, separate_intpart=True)
