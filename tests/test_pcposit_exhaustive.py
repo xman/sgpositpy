@@ -80,7 +80,14 @@ class TestPCPositExhaustive(unittest.TestCase):
                   c = op(a, b)
                   cbits = coder.encode_posit_binary(c.rep)
 
-                  if a.rep['t'] == 'n' and b.rep['t'] == 'n':
+                  if a.rep['t'] == 'n' and b.rep['t'] == 'n' and cbits == 0:
+                      self.assertTrue(op_str in ['+', '-'])
+                      if op_str == '+':
+                          self.assertEqual(abits, -bbits & mask)
+                      else: # '-'
+                          self.assertEqual(abits, bbits)
+
+                  elif a.rep['t'] == 'n' and b.rep['t'] == 'n':
                       amp = mp.mpf(eval(coder.positrep_to_rational_str(a.rep)))
                       bmp = mp.mpf(eval(coder.positrep_to_rational_str(b.rep)))
                       c2mp = mpop(amp, bmp)
