@@ -72,6 +72,8 @@ class TestPCPositExhaustive(unittest.TestCase):
         for nbits in nbits_range:
           mask = bitops.create_mask(nbits)
           cinf_bits = 1 << (nbits-1)
+          is_special = lambda bits: bits == 0 or bits == cinf_bits
+          is_normal = lambda bits: not is_special(bits)
           for es in es_range:
             for abits in range(2**nbits):
               for bbits in range(2**nbits):
@@ -80,14 +82,17 @@ class TestPCPositExhaustive(unittest.TestCase):
                   c = op(a, b)
                   cbits = coder.encode_posit_binary(c.rep)
 
-                  if a.rep['t'] == 'n' and b.rep['t'] == 'n' and cbits == 0:
+                  if is_normal(abits) and is_normal(bbits) and cbits == 0:
                       self.assertTrue(op_str in ['+', '-'])
                       if op_str == '+':
                           self.assertEqual(abits, -bbits & mask)
                       else: # '-'
                           self.assertEqual(abits, bbits)
 
-                  elif a.rep['t'] == 'n' and b.rep['t'] == 'n':
+                  elif is_normal(abits) and is_normal(bbits):
+                      self.assertNotEqual(cbits, 0)
+                      self.assertNotEqual(cbits, cinf_bits)
+
                       amp = mp.mpf(eval(coder.positrep_to_rational_str(a.rep)))
                       bmp = mp.mpf(eval(coder.positrep_to_rational_str(b.rep)))
                       c2mp = mpop(amp, bmp)
@@ -106,53 +111,53 @@ class TestPCPositExhaustive(unittest.TestCase):
                       rcmp = mp.mpf(eval(coder.positrep_to_rational_str(c.rep)))
                       cratiodiffmp = mp.fabs(mp.log(rcmp/c2mp)) if c2mp != 0 else mp.fabs(rcmp - c2mp)
                       cabsdiffmp = mp.fabs(rcmp - c2mp)
-                      if c0.rep['t'] != 'c':
-                          c0mp = mp.mpf(eval(coder.positrep_to_rational_str(c0.rep)))
-                          c0ratiodiffmp = mp.fabs(mp.log(c0mp/c2mp)) if c2mp != 0 else mp.fabs(c0mp - c2mp)
-                          c0absdiffmp = mp.fabs(c0mp - c2mp)
-                          self.assertTrue(cratiodiffmp <= c0ratiodiffmp or cabsdiffmp <= c0absdiffmp)
-                      if c1.rep['t'] != 'c':
-                          c1mp = mp.mpf(eval(coder.positrep_to_rational_str(c1.rep)))
-                          c1ratiodiffmp = mp.fabs(mp.log(c1mp/c2mp)) if c2mp != 0 else mp.fabs(c1mp - c2mp)
-                          c1absdiffmp = mp.fabs(c1mp - c2mp)
-                          self.assertTrue(cratiodiffmp <= c1ratiodiffmp or cabsdiffmp <= c1absdiffmp)
 
-                  elif a.rep['t'] == 'c':
+                      c0mp = mp.mpf(eval(coder.positrep_to_rational_str(c0.rep)))
+                      c0ratiodiffmp = mp.fabs(mp.log(c0mp/c2mp)) if c2mp != 0 else mp.fabs(c0mp - c2mp)
+                      c0absdiffmp = mp.fabs(c0mp - c2mp)
+                      self.assertTrue(cratiodiffmp <= c0ratiodiffmp or cabsdiffmp <= c0absdiffmp)
+
+                      c1mp = mp.mpf(eval(coder.positrep_to_rational_str(c1.rep)))
+                      c1ratiodiffmp = mp.fabs(mp.log(c1mp/c2mp)) if c2mp != 0 else mp.fabs(c1mp - c2mp)
+                      c1absdiffmp = mp.fabs(c1mp - c2mp)
+                      self.assertTrue(cratiodiffmp <= c1ratiodiffmp or cabsdiffmp <= c1absdiffmp)
+
+                  elif abits == cinf_bits:
                       self.assertTrue(op_str in ['+', '-', '*', '/'])
-                      self.assertEqual(c.rep['t'], 'c')
+                      self.assertEqual(cbits, cinf_bits)
 
-                  elif a.rep['t'] != 'c' and b.rep['t'] == 'c':
-                      self.assertTrue(op_str in ['+', '-', '*', '/'])
-                      if op_str == '/':
-                          self.assertEqual(c.rep['t'], 'z')
-                      else:
-                          self.assertEqual(c.rep['t'], 'c')
-
-                  elif a.rep['t'] == 'z' and b.rep['t'] == 'z':
+                  elif abits != cinf_bits and bbits == cinf_bits:
                       self.assertTrue(op_str in ['+', '-', '*', '/'])
                       if op_str == '/':
-                          self.assertEqual(c.rep['t'], 'c')
+                          self.assertEqual(cbits, 0)
                       else:
-                          self.assertEqual(c.rep['t'], 'z')
+                          self.assertEqual(cbits, cinf_bits)
 
-                  elif a.rep['t'] == 'n' and b.rep['t'] =='z':
+                  elif abits == 0 and bbits == 0:
+                      self.assertTrue(op_str in ['+', '-', '*', '/'])
+                      if op_str == '/':
+                          self.assertEqual(cbits, cinf_bits)
+                      else:
+                          self.assertEqual(cbits, 0)
+
+                  elif is_normal(abits) and bbits == 0:
                       if op_str == '+' or op_str == '-':
                           self.assertEqual(cbits, abits)
                       elif op_str == '*':
-                          self.assertEqual(c.rep['t'], 'z')
+                          self.assertEqual(cbits, 0)
                       elif op_str == '/':
-                          self.assertEqual(c.rep['t'], 'c')
+                          self.assertEqual(cbits, cinf_bits)
                       else:
                           self.assertTrue(False)
 
-                  elif a.rep['t'] == 'z' and b.rep['t'] == 'n':
+                  elif abits == 0 and is_normal(bbits):
                       self.assertTrue(op_str in ['+', '-', '*', '/'])
                       if op_str == '+':
                           self.assertEqual(cbits, bbits)
                       elif op_str == '-':
                           self.assertEqual(cbits, -bbits & mask)
                       else:
-                          self.assertEqual(c.rep['t'], 'z')
+                          self.assertEqual(cbits, 0)
 
                   else:
                         self.assertTrue(False)
