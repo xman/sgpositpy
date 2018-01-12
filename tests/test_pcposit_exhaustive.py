@@ -77,6 +77,7 @@ class TestPCPositExhaustive(unittest.TestCase):
                   a = PCPosit(abits, nbits=nbits, es=es, mode='bits')
                   b = PCPosit(bbits, nbits=nbits, es=es, mode='bits')
                   c = op(a, b)
+                  cbits = coder.encode_posit_binary(c.rep)
 
                   if a.rep['t'] == 'n' and b.rep['t'] == 'n':
                       amp = mp.mpf(eval(coder.positrep_to_rational_str(a.rep)))
@@ -85,10 +86,7 @@ class TestPCPositExhaustive(unittest.TestCase):
                       c0 = PCPosit((bbits-1) & mask, nbits=nbits, es=es, mode='bits')
                       c1 = PCPosit((bbits+1) & mask, nbits=nbits, es=es, mode='bits')
 
-                      cbits = coder.encode_posit_binary(c.rep)
-                      roundedc = coder.decode_posit_binary(cbits, nbits=nbits, es=es)
-
-                      rcmp = mp.mpf(eval(coder.positrep_to_rational_str(roundedc)))
+                      rcmp = mp.mpf(eval(coder.positrep_to_rational_str(c.rep)))
                       cratiodiffmp = mp.fabs(mp.log(rcmp/c2mp)) if c2mp != 0 else mp.fabs(rcmp - c2mp)
                       cabsdiffmp = mp.fabs(rcmp - c2mp)
                       if c0.rep['t'] != 'c':
@@ -101,6 +99,46 @@ class TestPCPositExhaustive(unittest.TestCase):
                           c1ratiodiffmp = mp.fabs(mp.log(c1mp/c2mp)) if c2mp != 0 else mp.fabs(c1mp - c2mp)
                           c1absdiffmp = mp.fabs(c1mp - c2mp)
                           self.assertTrue(cratiodiffmp <= c1ratiodiffmp or cabsdiffmp <= c1absdiffmp)
+
+                  elif a.rep['t'] == 'c':
+                      self.assertTrue(op_str in ['+', '-', '*', '/'])
+                      self.assertEqual(c.rep['t'], 'c')
+
+                  elif a.rep['t'] != 'c' and b.rep['t'] == 'c':
+                      self.assertTrue(op_str in ['+', '-', '*', '/'])
+                      if op_str == '/':
+                          self.assertEqual(c.rep['t'], 'z')
+                      else:
+                          self.assertEqual(c.rep['t'], 'c')
+
+                  elif a.rep['t'] == 'z' and b.rep['t'] == 'z':
+                      self.assertTrue(op_str in ['+', '-', '*', '/'])
+                      if op_str == '/':
+                          self.assertEqual(c.rep['t'], 'c')
+                      else:
+                          self.assertEqual(c.rep['t'], 'z')
+
+                  elif a.rep['t'] == 'n' and b.rep['t'] =='z':
+                      if op_str == '+' or op_str == '-':
+                          self.assertEqual(cbits, abits)
+                      elif op_str == '*':
+                          self.assertEqual(c.rep['t'], 'z')
+                      elif op_str == '/':
+                          self.assertEqual(c.rep['t'], 'c')
+                      else:
+                          self.assertTrue(False)
+
+                  elif a.rep['t'] == 'z' and b.rep['t'] == 'n':
+                      self.assertTrue(op_str in ['+', '-', '*', '/'])
+                      if op_str == '+':
+                          self.assertEqual(cbits, bbits)
+                      elif op_str == '-':
+                          self.assertEqual(cbits, -bbits & mask)
+                      else:
+                          self.assertEqual(c.rep['t'], 'z')
+
+                  else:
+                        self.assertTrue(False)
 
 
     @unittest.skipUnless(os.environ.get('SGPOSIT_LONG_TESTS') == '1', 'Long test.')
