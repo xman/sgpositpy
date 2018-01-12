@@ -111,6 +111,8 @@ def encode_posit_binary(rep):
 
     assert rep['t'] == 'n'
 
+    maxpos_bits = 2**(rep['nbits']-1) - 1
+
     n = rep['nbits'] - 1    # Remaining number of bits after reserving 1 for sign bit.
     bits = 0
     rounded = False
@@ -159,10 +161,10 @@ def encode_posit_binary(rep):
         n = 0
 
         if truncation == tie:
-            if bits & 0x01 and bits + 1 < 2**(rep['nbits'] - 1):
+            if bits & 0x01 and bits < maxpos_bits:
                 bits += 1
         elif truncation > tie:
-            if bits + 1 < 2**(rep['nbits'] - 1):
+            if bits < maxpos_bits:
                 bits += 1
 
         rounded = True
@@ -191,10 +193,10 @@ def encode_posit_binary(rep):
             n = 0
 
             if truncation == tie:
-                if bits & 0x01 and bits + 1 < 2**(rep['nbits'] - 1):
+                if bits & 0x01 and bits < maxpos_bits:
                     bits += 1
             elif truncation > tie:
-                if bits + 1 < 2**(rep['nbits'] - 1):
+                if bits < maxpos_bits:
                     bits += 1
 
             rounded = True
