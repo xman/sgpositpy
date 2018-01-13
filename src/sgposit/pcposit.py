@@ -114,35 +114,7 @@ class PCPosit:
         xc = xa * xb
         mc = ma + mb
 
-        pc = PCPosit(nbits=self.rep['nbits'], es=self.rep['es'])
-        pc.rep['t'] = 'n'
-
-        if xc < 0:
-            xc = -xc
-            pc.rep['s'] = 1
-
-        while xc != 0 and xc % 2 == 0:
-            xc >>= 1
-            mc += 1
-
-        g = 0
-        x = xc
-        while x >= 2:
-            x >>= 1
-            g -= 1
-
-        assert x >= 1 and x < 2, "x={}".format(x)
-
-        pc.rep['e'] = (mc - g) % 2**pc.rep['es']
-        pc.rep['k'] = (mc - g) // 2**pc.rep['es']
-
-        pc.rep['h'] = -g
-        pc.rep['f'] = xc - 2**pc.rep['h']
-
-        bits = coder.encode_posit_binary(pc.rep)
-        pc.rep = coder.decode_posit_binary(bits, nbits=pc.rep['nbits'], es=pc.rep['es'])
-
-        return pc
+        return self._fixedpoint_to_posit(xc, mc, nbits=self.rep['nbits'], es=self.rep['es'])
 
 
     def __div__(self, other):
