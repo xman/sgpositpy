@@ -127,6 +127,29 @@ class TestPCPosit(unittest.TestCase):
         raise NotImplementedError
 
 
+    def run_posit_cmp_op(self, abits=None, op_str=None, bbits=None, ref_output=None, nbits=None, es=None):
+        a = PCPosit(abits, nbits=nbits, es=es, mode='bits')
+        b = PCPosit(bbits, nbits=nbits, es=es, mode='bits')
+        out = None
+
+        if op_str == '==':
+            out = (a == b)
+        elif op_str == '!=':
+            out = (a != b)
+        elif op_str == '<':
+            out = (a < b)
+        elif op_str == '<=':
+            out = (a <= b)
+        elif op_str == '>':
+            out = (a > b)
+        elif op_str == '>=':
+            out = (a >= b)
+        else:
+            raise NotImplementedError("op={}".format(op_str))
+
+        self.assertEqual(out, ref_output)
+
+
     @unittest.skip("Not implemented.")
     def test_eq(self):
         raise NotImplementedError
