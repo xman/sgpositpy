@@ -204,8 +204,16 @@ class PCPosit:
     def _fixedpoint(self):
         rep = self.rep
 
-        x = (-1)**rep['s'] * (2**rep['h'] + rep['f'])
-        m = 2**rep['es'] * rep['k'] + rep['e'] - rep['h']
+        assert rep['t'] != 'c'
+
+        if rep['t'] == 'z':
+            x = 0
+            m = 0
+        else:
+            assert rep['t'] == 'n'
+
+            x = (-1)**rep['s'] * (2**rep['h'] + rep['f'])
+            m = 2**rep['es'] * rep['k'] + rep['e'] - rep['h']
 
         return (x,m)
 
