@@ -328,10 +328,5 @@ class TestPCPosit(unittest.TestCase):
         raise NotImplementedError
 
 
-    @unittest.skip("Not implemented.")
-    def test_repr(self):
-        raise NotImplementedError
-
-
 if __name__ == '__main__':
     unittest.main()
