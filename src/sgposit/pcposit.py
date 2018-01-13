@@ -157,11 +157,27 @@ class PCPosit:
 
 
     def __eq__(self, other):
-        raise NotImplementedError
+        a = self.rep
+        b = other.rep
+
+        if a['t'] == 'c' or b['t'] == 'c':
+            return False
+
+        elif a['t'] == 'z' or b['t'] == 'z':
+            if a['t'] == b['t']:
+                return True
+            else:
+                return False
+
+        else:
+            assert a['t'] == 'n'
+            assert b['t'] == 'n'
+
+            return a == b
 
 
     def __ne__(self, other):
-        raise NotImplementedError
+        return not(self == other)
 
 
     def __lt__(self, other):
