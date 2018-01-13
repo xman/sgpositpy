@@ -272,3 +272,13 @@ class PCPosit:
 
     def __str__(self):
         return coder.positrep_to_str(self.rep)
+
+
+    # Return (x,m) representing number = x * 2^m
+    def _fixedpoint(self):
+        rep = self.rep
+
+        x = (-1)**rep['s'] * (2**rep['h'] + rep['f'])
+        m = 2**rep['es'] * rep['k'] + rep['e'] - rep['h']
+
+        return (x,m)
