@@ -276,3 +276,45 @@ class PCPosit:
         m = 2**rep['es'] * rep['k'] + rep['e'] - rep['h']
 
         return (x,m)
+
+
+    @classmethod
+    def _fixedpoint_to_posit(cls, x, m, nbits=None, es=None):
+        assert nbits is not None
+        assert es is not None
+
+        if x == 0:
+            return PCPosit('0', nbits=nbits, es=es)
+
+        p = PCPosit(nbits=nbits, es=es)
+        p.rep['t'] = 'n'
+        p.rep['s'] = 0
+
+        if x < 0:
+            x = -x
+            p.rep['s'] = 1
+
+        assert x != 0
+
+        while x != 0 and x % 2 == 0:
+            x >>= 1
+            m += 1
+
+        g = 0
+        y = x
+        while y >= 2:
+            y >>= 1
+            g -= 1
+
+        assert y >= 1 and y < 2, "y={}".format(y)
+
+        p.rep['e'] = (m - g) % 2**es
+        p.rep['k'] = (m - g) // 2**es
+
+        p.rep['h'] = -g
+        p.rep['f'] = x - 2**p.rep['h']
+
+        bits = coder.encode_posit_binary(p.rep)
+        p.rep = coder.decode_posit_binary(bits, nbits=nbits, es=es)
+
+        return p
