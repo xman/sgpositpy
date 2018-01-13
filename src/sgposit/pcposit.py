@@ -21,6 +21,8 @@
 # SOFTWARE.
 
 
+import numbers
+
 from sgposit import coder
 
 
@@ -50,7 +52,7 @@ class PCPosit:
             self.rep = coder.copy_positrep(v.rep)
             return
         elif mode == 'bits':
-            if isinstance(v, int):
+            if isinstance(v, numbers.Integral):
                 self.rep = coder.decode_posit_binary(v, nbits=nbits, es=es)
                 return
             elif isinstance(v, str):
