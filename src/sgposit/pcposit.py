@@ -74,8 +74,7 @@ class PCPosit:
         elif other.rep['t'] == 'z':
             return PCPosit(self)
         elif self.rep['t'] == 'c' or other.rep['t'] == 'c':
-            ret = PCPosit(2**(self.rep['nbits']-1), mode='bits', nbits=self.rep['nbits'], es=self.rep['es'])
-            return ret
+            return PCPosit('cinf', nbits=self.rep['nbits'], es=self.rep['es'])
 
         assert self.rep['t'] == 'n' and other.rep['t'] == 'n'
 
@@ -136,13 +135,9 @@ class PCPosit:
 
     def __mul__(self, other):
         if self.rep['t'] == 'c' or other.rep['t'] == 'c':
-            p = PCPosit() # FIXME: Use constructor to directly initialized to posit zero.
-            p.rep = coder.create_cinf_positrep(nbits=self.rep['nbits'], es=self.rep['es'])
-            return p
+            return PCPosit('cinf', nbits=self.rep['nbits'], es=self.rep['es'])
         elif self.rep['t'] == 'z' or other.rep['t'] == 'z':
-            p = PCPosit() # FIXME
-            p.rep = coder.create_zero_positrep(nbits=self.rep['nbits'], es=self.rep['es'])
-            return p
+            return PCPosit('0', nbits=self.rep['nbits'], es=self.rep['es'])
 
         assert self.rep['t'] == 'n' and other.rep['t'] == 'n'
 
@@ -154,8 +149,7 @@ class PCPosit:
         xc = xa * xb
         mc = ma + mb
 
-        pc = PCPosit() # FIXME
-        pc.rep = coder.create_zero_positrep(nbits=self.rep['nbits'], es=self.rep['es'])
+        pc = PCPosit(nbits=self.rep['nbits'], es=self.rep['es'])
         pc.rep['t'] = 'n'
 
         if xc < 0:
@@ -192,13 +186,9 @@ class PCPosit:
 
     def __truediv__(self, other):
         if self.rep['t'] == 'c' or other.rep['t'] == 'z':
-            p = PCPosit() # FIXME: Use constructor to directly initialized to posit zero.
-            p.rep = coder.create_cinf_positrep(nbits=self.rep['nbits'], es=self.rep['es'])
-            return p
+            return PCPosit('cinf', nbits=self.rep['nbits'], es=self.rep['es'])
         elif self.rep['t'] == 'z' or other.rep['t'] == 'c':
-            p = PCPosit() # FIXME
-            p.rep = coder.create_zero_positrep(nbits=self.rep['nbits'], es=self.rep['es'])
-            return p
+            return PCPosit('0', nbits=self.rep['nbits'], es=self.rep['es'])
 
         assert self.rep['t'] == 'n' and other.rep['t'] == 'n'
 
@@ -207,8 +197,7 @@ class PCPosit:
         ma =  2**self.rep['es'] *  self.rep['k'] +  self.rep['e'] -  self.rep['h']
         mb = 2**other.rep['es'] * other.rep['k'] + other.rep['e'] - other.rep['h']
 
-        pc = PCPosit() # FIXME
-        pc.rep = coder.create_zero_positrep(nbits=self.rep['nbits'], es=self.rep['es'])
+        pc = PCPosit(nbits=self.rep['nbits'], es=self.rep['es'])
         pc.rep['t'] = 'n'
 
         if (xa < 0) ^ (xb < 0): pc.rep['s'] = 1
