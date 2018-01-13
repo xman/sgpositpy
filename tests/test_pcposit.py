@@ -113,6 +113,15 @@ class TestPCPosit(unittest.TestCase):
         self.run_posit_op(self.posit_n6e2_3o2_bits, '/', self.posit_n6e2_1_bits, self.posit_n6e2_3o2_bits, 6, 2)
 
 
+    def test_create_pcposit_from_large_int_bits(self):
+        p0 = PCPosit(3**80, mode='bits', nbits=256, es=2)
+        p1 = PCPosit(5**90, mode='bits', nbits=256, es=2)
+        p2 = p0 + p1
+        p3 = p0 - p1
+        p4 = p0 * p1
+        p5 = p0 / p1
+
+
     @unittest.skip("Not implemented.")
     def test_floordiv(self):
         raise NotImplementedError
