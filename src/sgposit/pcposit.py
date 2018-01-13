@@ -55,6 +55,15 @@ class PCPosit:
                 return
             elif isinstance(v, str):
                 raise NotImplementedError('Binary bit string posit conversion is not implemented.')
+        elif isinstance(v, str):
+            if v == 'cinf':
+                self.rep = coder.create_cinf_positrep(nbits=nbits, es=es)
+            elif v == '0':
+                self.rep = coder.create_zero_positrep(nbits=nbits, es=es)
+            else:
+                raise ValueError('Expect 0 or cinf posit consntant from the input string.')
+
+            return
 
         raise ValueError('Input is not supported.')
 
