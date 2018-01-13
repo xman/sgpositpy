@@ -22,6 +22,7 @@
 
 
 import numbers
+import operator
 
 from sgposit import coder
 
@@ -181,19 +182,19 @@ class PCPosit:
 
 
     def __lt__(self, other):
-        raise NotImplementedError
+        return self._cmp_op(other, operator.lt)
 
 
     def __le__(self, other):
-        raise NotImplementedError
+        return self._cmp_op(other, operator.le)
 
 
     def __gt__(self, other):
-        raise NotImplementedError
+        return self._cmp_op(other, operator.gt)
 
 
     def __ge__(self, other):
-        raise NotImplementedError
+        return self._cmp_op(other, operator.ge)
 
 
     def __str__(self):
