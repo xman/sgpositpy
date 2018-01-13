@@ -41,6 +41,9 @@ class TestPCPositExhaustive(unittest.TestCase):
     def setUp(self):
         mp.dps = 1000
 
+        self.nbits_range = range(2,9)
+        self.es_range = range(0,3)
+
 
     def tearDown(self):
         pass
@@ -68,6 +71,11 @@ class TestPCPositExhaustive(unittest.TestCase):
             mpop = mp.mpf.__truediv__
         else:
             raise NotImplementedError("op={}".format(op_str))
+
+        if nbits_range is None:
+            nbits_range = self.nbits_range
+        if es_range is None:
+            es_range = self.es_range
 
         for nbits in nbits_range:
           mask = bitops.create_mask(nbits)
@@ -186,19 +194,19 @@ class TestPCPositExhaustive(unittest.TestCase):
 
     @unittest.skipUnless(os.environ.get('SGPOSIT_LONG_TESTS') == '1', 'Long test.')
     def test_add_exhaustive(self):
-        self.run_posit_2op_exhaustive('+', nbits_range=range(2,9), es_range=range(0,3))
+        self.run_posit_2op_exhaustive('+')
 
     @unittest.skipUnless(os.environ.get('SGPOSIT_LONG_TESTS') == '1', 'Long test.')
     def test_sub_exhaustive(self):
-        self.run_posit_2op_exhaustive('-', nbits_range=range(2,9), es_range=range(0,3))
+        self.run_posit_2op_exhaustive('-')
 
     @unittest.skipUnless(os.environ.get('SGPOSIT_LONG_TESTS') == '1', 'Long test.')
     def test_mul_exhaustive(self):
-        self.run_posit_2op_exhaustive('*', nbits_range=range(2,9), es_range=range(0,3))
+        self.run_posit_2op_exhaustive('*')
 
     @unittest.skipUnless(os.environ.get('SGPOSIT_LONG_TESTS') == '1', 'Long test.')
     def test_truediv_exhaustive(self):
-        self.run_posit_2op_exhaustive('/', nbits_range=range(2,9), es_range=range(0,3))
+        self.run_posit_2op_exhaustive('/')
 
 
 if __name__ == '__main__':
