@@ -259,9 +259,36 @@ class TestPCPosit(unittest.TestCase):
         self.run_posit_cmp_op(self.posit_n6e2_m3o16_bits, '<=', self.posit_n6e2_m3o4_bits, False, 6, 2)
 
 
-    @unittest.skip("Not implemented.")
     def test_gt(self):
-        raise NotImplementedError
+        self.run_posit_cmp_op(0, '>', 0, False, 6, 2)
+        self.run_posit_cmp_op(0, '>', self.posit_n6e2_cinf_bits, False, 6, 2)
+        self.run_posit_cmp_op(0, '>', self.posit_n6e2_3o2_bits, False, 6, 2)
+        self.run_posit_cmp_op(0, '>', self.posit_n6e2_m3o16_bits, True, 6, 2)
+
+        self.run_posit_cmp_op(self.posit_n6e2_cinf_bits, '>', 0, False, 6, 2)
+        self.run_posit_cmp_op(self.posit_n6e2_cinf_bits, '>', self.posit_n6e2_cinf_bits, False, 6, 2)
+        self.run_posit_cmp_op(self.posit_n6e2_cinf_bits, '>', self.posit_n6e2_3o2_bits, False, 6, 2)
+        self.run_posit_cmp_op(self.posit_n6e2_cinf_bits, '>', self.posit_n6e2_m3o16_bits, False, 6, 2)
+
+        self.run_posit_cmp_op(self.posit_n6e2_3o2_bits, '>', 0, True, 6, 2)
+        self.run_posit_cmp_op(self.posit_n6e2_3o2_bits, '>', self.posit_n6e2_cinf_bits, False, 6, 2)
+        self.run_posit_cmp_op(self.posit_n6e2_3o2_bits, '>', self.posit_n6e2_3o2_bits, False, 6, 2)
+        self.run_posit_cmp_op(self.posit_n6e2_3o2_bits, '>', self.posit_n6e2_m3o16_bits, True, 6, 2)
+
+        self.run_posit_cmp_op(self.posit_n6e2_m3o16_bits, '>', 0, False, 6, 2)
+        self.run_posit_cmp_op(self.posit_n6e2_m3o16_bits, '>', self.posit_n6e2_cinf_bits, False, 6, 2)
+        self.run_posit_cmp_op(self.posit_n6e2_m3o16_bits, '>', self.posit_n6e2_3o2_bits, False, 6, 2)
+        self.run_posit_cmp_op(self.posit_n6e2_m3o16_bits, '>', self.posit_n6e2_m3o16_bits, False, 6, 2)
+
+        self.run_posit_cmp_op(self.posit_n6e2_3o2_bits, '>', self.posit_n6e2_m1o16_bits, True, 6, 2)
+        self.run_posit_cmp_op(self.posit_n6e2_3o2_bits, '>', self.posit_n6e2_3_bits, False, 6, 2)
+        self.run_posit_cmp_op(self.posit_n6e2_3o2_bits, '>', self.posit_n6e2_1o2_bits, True, 6, 2)
+        self.run_posit_cmp_op(self.posit_n6e2_3o2_bits, '>', self.posit_n6e2_m3o4_bits, True, 6, 2)
+
+        self.run_posit_cmp_op(self.posit_n6e2_m3o16_bits, '>', self.posit_n6e2_m1o16_bits, False, 6, 2)
+        self.run_posit_cmp_op(self.posit_n6e2_m3o16_bits, '>', self.posit_n6e2_3_bits, False, 6, 2)
+        self.run_posit_cmp_op(self.posit_n6e2_m3o16_bits, '>', self.posit_n6e2_1o2_bits, False, 6, 2)
+        self.run_posit_cmp_op(self.posit_n6e2_m3o16_bits, '>', self.posit_n6e2_m3o4_bits, True, 6, 2)
 
 
     @unittest.skip("Not implemented.")
