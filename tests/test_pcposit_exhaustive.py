@@ -82,6 +82,20 @@ class TestPCPositExhaustive(unittest.TestCase):
                   c = op(a, b)
                   cbits = coder.encode_posit_binary(c.rep)
 
+                  test_info = {
+                      'nbits'   : nbits,
+                      'es'      : es,
+                      'a'       : str(a),
+                      'b'       : str(b),
+                      'c'       : str(c),
+                      'abits'   : abits,
+                      'bbits'   : bbits,
+                      'cbits'   : cbits,
+                      'arep'    : a.rep,
+                      'brep'    : b.rep,
+                      'crep'    : c.rep,
+                  }
+
                   if is_normal(abits) and is_normal(bbits) and cbits == 0:
                       self.assertTrue(op_str in ['+', '-'])
                       if op_str == '+':
@@ -108,6 +122,13 @@ class TestPCPositExhaustive(unittest.TestCase):
                       c0 = PCPosit(c0bits, nbits=nbits, es=es, mode='bits')
                       c1 = PCPosit(c1bits, nbits=nbits, es=es, mode='bits')
 
+                      test_info['c0'    ] = str(c0)
+                      test_info['c1'    ] = str(c1)
+                      test_info['c0bits'] = c0bits
+                      test_info['c1bits'] = c1bits
+                      test_info['c0rep' ] = c0.rep
+                      test_info['c1rep' ] = c1.rep
+
                       rcmp = mp.mpf(eval(coder.positrep_to_rational_str(c.rep)))
                       cratiodiffmp = mp.fabs(mp.log(rcmp/c2mp)) if c2mp != 0 else mp.fabs(rcmp - c2mp)
                       cabsdiffmp = mp.fabs(rcmp - c2mp)
@@ -115,12 +136,12 @@ class TestPCPositExhaustive(unittest.TestCase):
                       c0mp = mp.mpf(eval(coder.positrep_to_rational_str(c0.rep)))
                       c0ratiodiffmp = mp.fabs(mp.log(c0mp/c2mp)) if c2mp != 0 else mp.fabs(c0mp - c2mp)
                       c0absdiffmp = mp.fabs(c0mp - c2mp)
-                      self.assertTrue(cratiodiffmp <= c0ratiodiffmp or cabsdiffmp <= c0absdiffmp)
+                      self.assertTrue(cratiodiffmp <= c0ratiodiffmp or cabsdiffmp <= c0absdiffmp, test_info)
 
                       c1mp = mp.mpf(eval(coder.positrep_to_rational_str(c1.rep)))
                       c1ratiodiffmp = mp.fabs(mp.log(c1mp/c2mp)) if c2mp != 0 else mp.fabs(c1mp - c2mp)
                       c1absdiffmp = mp.fabs(c1mp - c2mp)
-                      self.assertTrue(cratiodiffmp <= c1ratiodiffmp or cabsdiffmp <= c1absdiffmp)
+                      self.assertTrue(cratiodiffmp <= c1ratiodiffmp or cabsdiffmp <= c1absdiffmp, test_info)
 
                   elif abits == cinf_bits:
                       self.assertTrue(op_str in ['+', '-', '*', '/'])
