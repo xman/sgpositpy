@@ -191,49 +191,22 @@ class PCPosit:
         (xa,ma) = self._fixedpoint()
         (xb,mb) = other._fixedpoint()
 
-        pc = PCPosit(nbits=self.rep['nbits'], es=self.rep['es'])
-        pc.rep['t'] = 'n'
-
-        if (xa < 0) ^ (xb < 0): pc.rep['s'] = 1
+        nbits = self.rep['nbits']
+        es = self.rep['es']
+        sign = 1
+        if (xa < 0)^(xb < 0): sign = -1
         if xa < 0: xa = -xa
         if xb < 0: xb = -xb
 
-        g = ma - mb + (2**pc.rep['es'])*(pc.rep['nbits']-2) + pc.rep['nbits'] - 1
+        g = ma - mb + (2**es)*(nbits-2) + nbits - 1
         g = max(0, g)
         xc = (xa * 2**g) // xb
         mc = ma - mb - g
 
-        if xc != 0:
-            while xc != 0 and xc % 2 == 0:
-                xc >>= 1
-                mc += 1
+        xc = max(xc, 1)     # Posit never round to 0.
+        xc *= sign
 
-            g = 0
-            x = xc
-            while x >= 2:
-                x >>= 1
-                g -= 1
-
-            assert x >= 1 and x < 2, "x={}".format(x)
-
-            pc.rep['e'] = (mc - g) % 2**pc.rep['es']
-            pc.rep['k'] = (mc - g) // 2**pc.rep['es']
-
-            pc.rep['h'] = -g
-            pc.rep['f'] = xc - 2**pc.rep['h']
-
-        else:
-            # round to minpos
-            pc.rep['e'] = 0
-            pc.rep['k'] = -pc.rep['nbits'] + 2
-            pc.rep['h'] = 0
-            pc.rep['f'] = 0
-
-
-        bits = coder.encode_posit_binary(pc.rep)
-        pc.rep = coder.decode_posit_binary(bits, nbits=pc.rep['nbits'], es=pc.rep['es'])
-
-        return pc
+        return self._fixedpoint_to_posit(xc, mc, nbits=nbits, es=es)
 
 
     def __floordiv__(self, other):
