@@ -200,6 +200,23 @@ class PCPosit:
         return coder.positrep_to_str(self.rep)
 
 
+    def _cmp_op(self, other, op):
+        a = self.rep
+        b = other.rep
+
+        if a['t'] == 'c' or b['t'] == 'c':
+            return False
+
+        (xa,ma) = self._fixedpoint()
+        (xb,mb) = other._fixedpoint()
+
+        m = max(ma, mb)
+        xa <<= m - mb
+        xb <<= m - ma
+
+        return op(xa, xb)
+
+
     # Return (x,m) representing number = x * 2^m
     def _fixedpoint(self):
         rep = self.rep
