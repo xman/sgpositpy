@@ -78,10 +78,8 @@ class PCPosit:
 
         assert self.rep['t'] == 'n' and other.rep['t'] == 'n'
 
-        xa = ( -1)**self.rep['s'] * ( 2**self.rep['h'] +  self.rep['f'])
-        xb = (-1)**other.rep['s'] * (2**other.rep['h'] + other.rep['f'])
-        ma =  2**self.rep['es'] *  self.rep['k'] +  self.rep['e'] -  self.rep['h']
-        mb = 2**other.rep['es'] * other.rep['k'] + other.rep['e'] - other.rep['h']
+        (xa,ma) = self._fixedpoint()
+        (xb,mb) = other._fixedpoint()
 
         m = max(ma, mb)
         xc = xa*2**(m-mb) + xb*2**(m-ma)
@@ -141,10 +139,8 @@ class PCPosit:
 
         assert self.rep['t'] == 'n' and other.rep['t'] == 'n'
 
-        xa = ( -1)**self.rep['s'] * ( 2**self.rep['h'] +  self.rep['f'])
-        xb = (-1)**other.rep['s'] * (2**other.rep['h'] + other.rep['f'])
-        ma =  2**self.rep['es'] *  self.rep['k'] +  self.rep['e'] -  self.rep['h']
-        mb = 2**other.rep['es'] * other.rep['k'] + other.rep['e'] - other.rep['h']
+        (xa,ma) = self._fixedpoint()
+        (xb,mb) = other._fixedpoint()
 
         xc = xa * xb
         mc = ma + mb
@@ -192,10 +188,8 @@ class PCPosit:
 
         assert self.rep['t'] == 'n' and other.rep['t'] == 'n'
 
-        xa = ( -1)**self.rep['s'] * ( 2**self.rep['h'] +  self.rep['f'])
-        xb = (-1)**other.rep['s'] * (2**other.rep['h'] + other.rep['f'])
-        ma =  2**self.rep['es'] *  self.rep['k'] +  self.rep['e'] -  self.rep['h']
-        mb = 2**other.rep['es'] * other.rep['k'] + other.rep['e'] - other.rep['h']
+        (xa,ma) = self._fixedpoint()
+        (xb,mb) = other._fixedpoint()
 
         pc = PCPosit(nbits=self.rep['nbits'], es=self.rep['es'])
         pc.rep['t'] = 'n'
