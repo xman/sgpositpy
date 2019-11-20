@@ -237,7 +237,7 @@ class PCPosit:
 
 
     @classmethod
-    def _fixedpoint_to_posit(cls, x, m, nbits=None, es=None):
+    def _fixedpoint_to_posit(cls, x, m, nbits, es):
         assert nbits is not None
         assert es is not None
 
