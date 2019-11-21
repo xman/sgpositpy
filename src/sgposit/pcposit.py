@@ -200,6 +200,10 @@ class PCPosit:
     def __str__(self):
         return coder.positrep_to_str(self.rep)
 
+    def __repr__(self):
+        bits = coder.encode_posit_binary(self.rep)
+        template = "PCPosit({}, mode='bits', nbits={}, es={})"
+        return template.format(hex(bits), self.rep['nbits'], self.rep['es'])
 
     def _cmp_op(self, other, op):
         a = self.rep
