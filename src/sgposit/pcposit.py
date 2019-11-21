@@ -64,7 +64,7 @@ class PCPosit:
             elif v == '0':
                 self.rep = coder.create_zero_positrep(nbits=nbits, es=es)
             else:
-                raise ValueError('Expect 0 or cinf posit consntant from the input string.')
+                raise ValueError('Expect 0 or cinf posit constant from the input string.')
 
             return
 
