@@ -205,6 +205,15 @@ class PCPosit:
         template = "PCPosit({}, mode='bits', nbits={}, es={})"
         return template.format(hex(bits), self.rep['nbits'], self.rep['es'])
 
+    def __int__(self):
+        if self.rep['t'] == 'z':
+            return 0
+        if self.rep['t'] == 'c':
+            raise ValueError('Cannot convert posit cinf to int')
+        (sign, intpart, _, _) = coder.positrep_normal_to_rational(self.rep)
+        return sign * intpart
+        
+
     def _cmp_op(self, other, op):
         a = self.rep
         b = other.rep
