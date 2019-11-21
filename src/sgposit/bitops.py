@@ -21,21 +21,21 @@
 # SOFTWARE.
 
 
-"""
-Create a mask with n ones.
-"""
 def create_mask(n):
+    """
+    Create a mask with n ones.
+    """
     if n <= 0:
         return 0
     return (1 << n) - 1
 
 
-"""
-Get bits in integer v from bit ifirst to bit ilast, inclusive.
-Integer v = b_n-1, ..., b_1, b_0
-The bit position is 0-based and starts from the least significant bit.
-"""
 def get_int_bits(v, ifirst, ilast=None):
+    """
+    Get bits in integer v from bit ifirst to bit ilast, inclusive.
+    Integer v = b_n-1, ..., b_1, b_0
+    The bit position is 0-based and starts from the least significant bit.
+    """
     if ilast is None: ilast = ifirst
 
     assert ifirst >= 0 and ifirst <= ilast
@@ -47,12 +47,12 @@ def get_int_bits(v, ifirst, ilast=None):
     return v
 
 
-"""
-Count the number of leading bits with value b, from bit ilast down to bit 0.
-Integer v = b_n-1, ..., b_1, b_0
-The bit position is 0-based and starts from the least significant bit.
-"""
 def count_leading_bits(bits, b, ilast):
+    """
+    Count the number of leading bits with value b, from bit ilast down to bit 0.
+    Integer v = b_n-1, ..., b_1, b_0
+    The bit position is 0-based and starts from the least significant bit.
+    """
     assert ilast >= 0
 
     count = 0

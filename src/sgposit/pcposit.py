@@ -27,11 +27,11 @@ import operator
 from sgposit import coder
 
 
-"""
-Provably correct posit number arithmetic.
-"""
 class PCPosit:
-
+    """
+    Provably correct posit number arithmetic.
+    """
+    
     def __init__(self, v=None, mode=None, nbits=None, es=None):
         nbits_given = True
         es_given = True
@@ -218,8 +218,10 @@ class PCPosit:
         return op(xa, xb)
 
 
-    # Return (x,m) representing number = x * 2^m
     def _fixedpoint(self):
+        """
+        Return (x,m) representing number = x * 2^m
+        """
         rep = self.rep
 
         assert rep['t'] != 'c'

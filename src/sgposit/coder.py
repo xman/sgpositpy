@@ -215,9 +215,11 @@ def encode_posit_binary(rep):
     return bits
 
 
-# rep: normal posit representation,
-# return (sign, intpart, num, den) where number = sign*(intpart + num/den)
 def positrep_normal_to_rational(rep):
+    """
+    rep: normal posit representation
+    return (sign, intpart, num, den) where number = sign*(intpart + num/den)
+    """
     assert rep['t'] == 'n'
 
     E = (2**rep['es'] * rep['k']) + rep['e']
@@ -247,8 +249,10 @@ def positrep_normal_to_rational(rep):
     return (sign, intpart, num, den)
 
 
-# rational: (sign, intpart, num, den) where number = sign*(intpart + num/den)
 def rational_to_str(rational, separate_intpart=False):
+    """
+    rational: (sign, intpart, num, den) where number = sign*(intpart + num/den)
+    """
 
     (sign, intpart, num, den) = rational
 
