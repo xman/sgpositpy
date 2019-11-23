@@ -28,11 +28,10 @@ from math import isnan as float_isnan
 from sgposit import coder
 
 
-"""
-Possibly correct posit number arithmetic.
-"""
 class PCPosit(numbers.Real):
-
+    """
+    Possibly correct posit number arithmetic.
+    """
     def __init__(self, v=None, mode=None, nbits=None, es=None, force=False):
         nbits_given = True
         es_given = True
