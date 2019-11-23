@@ -23,16 +23,17 @@
 
 import numbers
 import operator
+from math import isnan as float_isnan
 
 from sgposit import coder
 
 
 """
-Provably correct posit number arithmetic.
+Possibly correct posit number arithmetic.
 """
-class PCPosit:
+class PCPosit(numbers.Real):
 
-    def __init__(self, v=None, mode=None, nbits=None, es=None):
+    def __init__(self, v=None, mode=None, nbits=None, es=None, force=False):
         nbits_given = True
         es_given = True
         if nbits is None:
@@ -46,12 +47,9 @@ class PCPosit:
             self.rep = coder.create_zero_positrep(nbits=nbits, es=es)
             return
         elif isinstance(v, PCPosit):
-            if nbits_given and v.rep['nbits'] != nbits:
-                raise NotImplementedError('Mismatched nbits posit conversion is not implemented.')
-            if es_given and v.rep['es'] != es:
-                raise NotImplementedError('Mismatched es posit conversion is not implemented.')
-            self.rep = coder.copy_positrep(v.rep)
-            return
+            env_adjusted = v._resize_env(nbits, es)
+            self.rep = coder.copy_positrep(env_adjusted.rep)
+            return 
         elif mode == 'bits':
             if isinstance(v, numbers.Integral):
                 self.rep = coder.decode_posit_binary(v, nbits=nbits, es=es)
@@ -59,7 +57,7 @@ class PCPosit:
             elif isinstance(v, str):
                 raise NotImplementedError('Binary bit string posit conversion is not implemented.')
         elif isinstance(v, str):
-            if v == 'cinf':
+            if v in {'cinf'}:
                 self.rep = coder.create_cinf_positrep(nbits=nbits, es=es)
             elif v == '0':
                 self.rep = coder.create_zero_positrep(nbits=nbits, es=es)
@@ -67,34 +65,49 @@ class PCPosit:
                 raise ValueError('Expect 0 or cinf posit constant from the input string.')
 
             return
-
+        if force:
+            return self._force_to_posit(v)
         raise ValueError('Input is not supported.')
 
 
+    def __abs__(self):
+        p = PCPosit(self)
+        if p.rep['t'] == 'n':
+            p.rep['s'] = 0
+        return p
+
     def __add__(self, other):
-        if self.rep['t'] == 'z':
-            return PCPosit(other)
-        elif other.rep['t'] == 'z':
-            return PCPosit(self)
-        elif self.rep['t'] == 'c' or other.rep['t'] == 'c':
-            return PCPosit('cinf', nbits=self.rep['nbits'], es=self.rep['es'])
+        old_nbits, old_es = self.rep['nbits'], self.rep['es']
+        selfm, otherm = self._match_env(self, other)
+        if selfm.rep['t'] == 'z':
+            return otherm
+        elif otherm.rep['t'] == 'z':
+            return self
+        elif selfm.rep['t'] == 'c' or otherm.rep['t'] == 'c':
+            return PCPosit('cinf', nbits=old_nbits, es=old_es)
 
-        assert self.rep['t'] == 'n' and other.rep['t'] == 'n'
+        assert selfm.rep['t'] == 'n' and other.rep['t'] == 'n'
 
-        (xa,ma) = self._fixedpoint()
-        (xb,mb) = other._fixedpoint()
+        (xa,ma) = selfm._fixedpoint()
+        (xb,mb) = otherm._fixedpoint()
 
         m = max(ma, mb)
         xc = xa*2**(m-mb) + xb*2**(m-ma)
         mc = ma + mb - m
 
-        return self._fixedpoint_to_posit(xc, mc, nbits=self.rep['nbits'], es=self.rep['es'])
-
+        return self._fixedpoint_to_posit(xc, mc, nbits=old_nbits, es=old_es)
+    __radd__ = __add__
 
     def __sub__(self, other):
-        p = -PCPosit(other)
-        return self + p
+        selfm, otherm = self._match_env(self, other)
+        p = -otherm
+        return self._copy_env(selfm + p)
 
+    def __rsub__(self, other):
+        return PCPosit(other, force=True).__sub__(self)
+
+    def __pos__(self):
+        return PCPosit(self)
 
     def __neg__(self):
         p = PCPosit(self)
@@ -104,12 +117,14 @@ class PCPosit:
 
 
     def __mul__(self, other):
-        if self.rep['t'] == 'c' or other.rep['t'] == 'c':
-            return PCPosit('cinf', nbits=self.rep['nbits'], es=self.rep['es'])
-        elif self.rep['t'] == 'z' or other.rep['t'] == 'z':
-            return PCPosit('0', nbits=self.rep['nbits'], es=self.rep['es'])
+        selfm, otherm = self._match_env(self, other)
+        if selfm.rep['t'] == 'c' or otherm.rep['t'] == 'c':
+            return PCPosit('cinf', nbits=selfm.rep['nbits'], es=selfm.rep['es'])
+        elif selfm.rep['t'] == 'z' or otherm.rep['t'] == 'z':
+            return PCPosit('0', nbits=selfm.rep['nbits'], es=selfm.rep['es'])
+        old_nbits, old_es = self.rep['nbits'], self.rep['es']
 
-        assert self.rep['t'] == 'n' and other.rep['t'] == 'n'
+        assert selfm.rep['t'] == 'n' and otherm.rep['t'] == 'n'
 
         (xa,ma) = self._fixedpoint()
         (xb,mb) = other._fixedpoint()
@@ -117,26 +132,28 @@ class PCPosit:
         xc = xa * xb
         mc = ma + mb
 
-        return self._fixedpoint_to_posit(xc, mc, nbits=self.rep['nbits'], es=self.rep['es'])
+        return self._fixedpoint_to_posit(xc, mc, nbits=old_rep, es=old_es)
+    __rmul__ = __mul__
 
 
-    def __div__(self, other):
-        return self.__truediv__(other)
+    def __rdiv__(self, other):
+        return PCPosit(other, force=True).__div__(self)
 
 
     def __truediv__(self, other):
-        if self.rep['t'] == 'c' or other.rep['t'] == 'z':
-            return PCPosit('cinf', nbits=self.rep['nbits'], es=self.rep['es'])
-        elif self.rep['t'] == 'z' or other.rep['t'] == 'c':
-            return PCPosit('0', nbits=self.rep['nbits'], es=self.rep['es'])
+        old_nbits, old_es = self.rep['nbits'], self.rep['es']
+        selfm, otherm = self._match_env(self, other)
+        if selfm.rep['t'] == 'c' or otherm.rep['t'] == 'z':
+            return PCPosit('cinf', nbits=old_nbits, es=old_es)
+        elif selfm.rep['t'] == 'z' or otherm.rep['t'] == 'c':
+            return PCPosit('0', nbits=old_nbits, es=old_es)
 
-        assert self.rep['t'] == 'n' and other.rep['t'] == 'n'
+        assert selfm.rep['t'] == 'n' and otherm.rep['t'] == 'n'
 
-        (xa,ma) = self._fixedpoint()
-        (xb,mb) = other._fixedpoint()
+        (xa,ma) = selfm._fixedpoint()
+        (xb,mb) = otherm._fixedpoint()
 
-        nbits = self.rep['nbits']
-        es = self.rep['es']
+        nbits, es = selfm.rep['nbits'], selfm.rep['es']
         sign = 1
         if (xa < 0)^(xb < 0): sign = -1
         if xa < 0: xa = -xa
@@ -150,16 +167,73 @@ class PCPosit:
         xc = max(xc, 1)     # Posit never round to 0.
         xc *= sign
 
-        return self._fixedpoint_to_posit(xc, mc, nbits=nbits, es=es)
+        return self._fixedpoint_to_posit(xc, mc, nbits=old_nbits, es=old_es)
+    __div__ = __truediv__
 
+    def __mod__(self, other):
+        selfm, otherm = self._match_env(self, other)
+        #Have yet to figure out the algorithm here!
+        return NotImplemented
+
+    def __rmod__(self, other):
+        return PCPosit(other, force=True).__mod__(self)
+
+    def __rtruediv__(self, other):
+        return PCPosit(other, force=True).__truediv__(self)
 
     def __floordiv__(self, other):
-        raise NotImplementedError
+        selfm, otherm = self._match_env(self, other)
+        result = selfm.__truediv__(otherm).__floor__()
+        return self._copy_env(result)
 
+    def __rfloordiv__(self, other):
+        return PCPosit(other, force=True).__floordiv__(self)
+
+    def __round__(self, ndigits=None):
+        if ndigits == None:
+            #round to nearest int
+            pass
+        else:
+            #round to
+            pass
+        #need to figure out algorithm here!
+        return NotImplemented
+
+    def __floor__(self):
+        '''
+        always round towards -inf
+        '''
+        if self.rep['t'] == 'z':
+            return 0
+        if self.rep['t'] == 'c':
+            raise ValueError('Cannot convert posit cinf to Integral')
+        (sign, intpart, num, den) = coder.positrep_normal_to_rational(self.rep)
+        if num == 0:
+            return sign*intpart
+        else:
+            if sign == 1:
+                #+ve number: leave truncated
+                return sign*intpart
+            else:
+                #-ve number: decrement truncation
+                return sign*intpart - 1
+
+    def __ceil__(self):
+        #invert, floor, then invert again
+        inverse_floor = self.__neg__().__floor__()
+        return -inverse_floor
+
+    def __pow__(self, other):
+        #This is a difficult algorithm!
+        return NotImplemented
+
+    def __rpow__(self, other):
+        return PCPosit(other, force=True).__pow__(self)
 
     def __eq__(self, other):
-        a = self.rep
-        b = other.rep
+        selfm, otherm = self._match_env(self, other)
+        a = selfm.rep
+        b = otherm.rep
 
         if a['t'] == 'c' or b['t'] == 'c':
             return False
@@ -211,12 +285,55 @@ class PCPosit:
         if self.rep['t'] == 'c':
             raise ValueError('Cannot convert posit cinf to int')
         (sign, intpart, _, _) = coder.positrep_normal_to_rational(self.rep)
-        return sign * intpart
-        
+        return int(sign * intpart)
+    __trunc__ = __int__
+
+
+    def __float__(self):
+        if self.rep['t'] == 'z':
+            return 0.0
+        if self.rep['t'] == 'c':
+            return float('nan')
+        (sign, intpart, num, den) = coder.positrep_normal_to_rational(self.rep)
+        full_numerator = sign * (intpart * den + num)
+        #use integers till last step, minimising rounding error with floats
+        return float(full_numerator / den)
+
+    @classmethod
+    def from_rational(cls, value, nbits=32, es=2):
+        raise NotImplementedError
+        """
+        numerator, denominator = value
+        assert isinstance(numerator, int) and isinstance(denominator, int)
+        assert denominator > 0
+        #overly precise, which makes for a simpler algorithm
+        bits_of_prec = ???
+        """
+
+    @classmethod
+    def from_float(cls, value, nbits=32, es=2):
+        assert isinstance(value, float)
+        if float_isnan(value):
+            return PCPosit('cinf', nbits=nbits, es=es)
+        numerator, denominator = value.as_integer_ratio()
+        #assert denominator is power of 2
+        assert ((denominator - 1) & denominator) == 0
+        power_of_2 = 1
+        while denominator > 0:
+            power_of_2 -= 1
+            denominator >>= 1
+        fixedpoint = (numerator, power_of_2)
+        return cls._fixedpoint_to_posit(*fixedpoint, nbits, es)
+
+    @classmethod
+    def from_int(cls, value, nbits=32, es=2):
+        assert isinstance(value, int)
+        return cls._fixedpoint_to_posit(value, 0, nbits, es)
 
     def _cmp_op(self, other, op):
-        a = self.rep
-        b = other.rep
+        selfm, otherm = self._match_env(self, other)
+        a = selfm.rep
+        b = otherm.rep
 
         if a['t'] == 'c' or b['t'] == 'c':
             return False
@@ -230,9 +347,67 @@ class PCPosit:
 
         return op(xa, xb)
 
+    @classmethod
+    def _force_to_posit(cls, value, nbits=None, es=None):
+        """
+        Attempt to coerce value into a posit
+        """
+        if isinstance(value, cls):
+            if nbits is None and es is None:
+                return cls(value)
+            return value._resize_env(nbits, es)
+        elif isinstance(value, dict):
+            new_posit = cls()
+            #assert value looks like a valid rep:
+            assert set(new_posit.rep) == set(value)
+            new_posit.rep = value
+            if nbits is None and es is None:
+                return new_posit
+            else:
+                return new_posit._resize_env(nbits, es)
+        else:
+            raise TypeError(type(value)) from NotImplementedError()
 
-    # Return (x,m) representing number = x * 2^m
+    @classmethod
+    def _match_env(cls, *numbers, nbits_min=32, es_min=2):
+        """
+        Converts args to posits,
+        expanded to the biggest posit environment, to
+        have equal nbits and es to each other
+        """
+        assert len(numbers) > 0
+        posits = [cls._force_to_posit(number) for number in numbers]
+        nbits_es_dif_max = max(
+            abs(posit.rep['nbits'] - posit.rep['es'])
+            for posit in posits
+        )
+        nbits_es_dif_max = max(nbits_es_dif_max, nbits_min)
+        es_max = max(posit.rep['es'] for posit in posits)
+        es_max = max(es_max, es_min)
+        nbits_max = nbits_es_dif_max + es_max
+        env_matched = tuple(
+            posit._resize_env(nbits_max, es_max) for posit in posits
+        )
+        return env_matched
+
+    def _resize_env(self, nbits=None, es=None):
+        if nbits is None:
+            nbits = self.rep['nbits']
+        if es is None:
+            es = self.rep['es']
+        if self.rep['t'] == 'c':
+            return PCPosit('cinf', nbits=nbits, es=es)
+        fixedpoint = self._fixedpoint()
+        return PCPosit._fixedpoint_to_posit(*fixedpoint, nbits, es)
+
+    def _copy_env(self, result):
+        nbits, es = self.rep['nbits'], self.rep['es']
+        return result._resize_env(nbits, es)
+
     def _fixedpoint(self):
+        """
+        Return (x,m) representing number = x * 2^m
+        """
         rep = self.rep
 
         assert rep['t'] != 'c'
@@ -247,7 +422,6 @@ class PCPosit:
             m = 2**rep['es'] * rep['k'] + rep['e'] - rep['h']
 
         return (x,m)
-
 
     @classmethod
     def _fixedpoint_to_posit(cls, x, m, nbits, es):

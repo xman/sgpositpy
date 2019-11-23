@@ -34,8 +34,17 @@ from sgposit import bitops
 
 
 def create_positrep(nbits=32, es=2, s=0, k=0, e=0, f=0, h=0, t='n'):
+    """
+    nbits: total number of bits in posit
+    es: maximum number of bits in exponent
+    s: sign (1 for negative, 0 for positive)
+    k: value of regime
+    e: exponent
+    f: fractional part
+    h: number of bits devoted to fraction
+    t: type of value (n for normal number, z for 0, c for complex infinity)
+    """
     return { 's': s, 'k': k, 'e': e, 'f': f, 'h': h, 'nbits': nbits, 'es': es, 't': t }
-
 
 def create_zero_positrep(nbits=32, es=2):
     return create_positrep(nbits=nbits, es=es, s=0, k=0, e=0, f=0, h=0, t='z')
@@ -71,10 +80,10 @@ def decode_posit_binary(bits, nbits, es):
     nleads = bitops.count_leading_bits(bits, regime, nbits-2)
 
     if regime == 0:
-        assert 1 <= nleads and nleads <= nbits-2
+        assert 1 <= nleads <= nbits-2
         rep['k'] = -nleads
     else:
-        assert 1 <= nleads and nleads <= nbits-1
+        assert 1 <= nleads <= nbits-1
         rep['k'] = nleads - 1
 
     i = nbits - 1 - nleads - 1 - 1      # n - signbit - rs - rbar - nextbit
@@ -213,7 +222,6 @@ def encode_posit_binary(rep):
     assert isinstance(bits, numbers.Integral) and bits >= 0 and bits <= bitops.create_mask(rep['nbits'])
 
     return bits
-
 
 # rep: normal posit representation,
 # return (sign, intpart, num, den) where number = sign*(intpart + num/den)
