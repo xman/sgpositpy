@@ -47,6 +47,10 @@ class PCPosit(numbers.Real):
             self.rep = coder.create_zero_positrep(nbits=nbits, es=es)
             return
         elif isinstance(v, PCPosit):
+            if not nbits_given:
+                nbits = v.rep['nbits']
+            if not es_given:
+                es = v.rep['es']
             env_adjusted = v._resize_env(nbits, es)
             self.rep = coder.copy_positrep(env_adjusted.rep)
             return 
@@ -80,9 +84,9 @@ class PCPosit(numbers.Real):
         old_nbits, old_es = self.rep['nbits'], self.rep['es']
         selfm, otherm = self._match_env(self, other)
         if selfm.rep['t'] == 'z':
-            return otherm
+            return PCPosit(other)
         elif otherm.rep['t'] == 'z':
-            return self
+            return PCPosit(self)
         elif selfm.rep['t'] == 'c' or otherm.rep['t'] == 'c':
             return PCPosit('cinf', nbits=old_nbits, es=old_es)
 
@@ -99,9 +103,7 @@ class PCPosit(numbers.Real):
     __radd__ = __add__
 
     def __sub__(self, other):
-        selfm, otherm = self._match_env(self, other)
-        p = -otherm
-        return self._copy_env(selfm + p)
+        return self + (-other)
 
     def __rsub__(self, other):
         return PCPosit(other, force=True).__sub__(self)
@@ -117,12 +119,12 @@ class PCPosit(numbers.Real):
 
 
     def __mul__(self, other):
+        old_nbits, old_es = self.rep['nbits'], self.rep['es']
         selfm, otherm = self._match_env(self, other)
         if selfm.rep['t'] == 'c' or otherm.rep['t'] == 'c':
-            return PCPosit('cinf', nbits=selfm.rep['nbits'], es=selfm.rep['es'])
+            return PCPosit('cinf', nbits=old_nbits, es=old_es)
         elif selfm.rep['t'] == 'z' or otherm.rep['t'] == 'z':
-            return PCPosit('0', nbits=selfm.rep['nbits'], es=selfm.rep['es'])
-        old_nbits, old_es = self.rep['nbits'], self.rep['es']
+            return PCPosit('0', nbits=old_nbits, es=old_es)
 
         assert selfm.rep['t'] == 'n' and otherm.rep['t'] == 'n'
 
@@ -132,7 +134,7 @@ class PCPosit(numbers.Real):
         xc = xa * xb
         mc = ma + mb
 
-        return self._fixedpoint_to_posit(xc, mc, nbits=old_rep, es=old_es)
+        return self._fixedpoint_to_posit(xc, mc, nbits=old_nbits, es=old_es)
     __rmul__ = __mul__
 
 
@@ -275,9 +277,10 @@ class PCPosit(numbers.Real):
         return coder.positrep_to_str(self.rep)
 
     def __repr__(self):
+        nbits, es = self.rep['nbits'], self.rep['es']
         bits = coder.encode_posit_binary(self.rep)
         template = "PCPosit({}, mode='bits', nbits={}, es={})"
-        return template.format(hex(bits), self.rep['nbits'], self.rep['es'])
+        return template.format(hex(bits), nbits, es)
 
     def __int__(self):
         if self.rep['t'] == 'z':
